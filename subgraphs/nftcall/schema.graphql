@@ -1,0 +1,28 @@
+enum NFTStatus {
+  Deposited
+  Listed
+  Called
+  Removed
+}
+
+type NFT @entity {
+  id: Bytes!
+  status: NFTStatus!
+  position: Position
+  updateTimestamp: BigInt!
+
+  callPoolAddress: Bytes!
+  nftAddress: Bytes!
+  tokenId: BigInt!
+  userAddress: Bytes!
+}
+
+enum PositionStatus {
+  Unexercised
+  Exercised
+}
+type Position @entity {
+  id: Bytes!
+  status: PositionStatus!
+  updateTimestamp: BigInt!
+}
