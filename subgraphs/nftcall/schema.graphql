@@ -6,15 +6,19 @@ enum NFTStatus {
 }
 
 type NFT @entity {
-  id: Bytes!
-  status: NFTStatus!
-  position: Position
-  updateTimestamp: BigInt!
-
-  callPoolAddress: Bytes!
+  id: ID!
   nftAddress: Bytes!
   tokenId: BigInt!
+
+  status: NFTStatus!
+  position: Position
+  updateTimestamp: Int!
+
+  callPoolAddress: Bytes!
   userAddress: Bytes!
+
+  strikePriceGapIdx: Int!
+  durationIdx: Int!
 }
 
 enum PositionStatus {
@@ -22,7 +26,29 @@ enum PositionStatus {
   Exercised
 }
 type Position @entity {
-  id: Bytes!
+  id: ID!
+  userAddress: Bytes!
+  nftAddress: Bytes!
+  tokenId: BigInt!
+
+  callPoolAddress: Bytes!
+  exerciseTime: Int!
+  endTime: Int!
+  strikePrice: BigInt!
+  premiumToOwner: BigInt!
+  premiumToReserve: BigInt!
+
   status: PositionStatus!
-  updateTimestamp: BigInt!
+  updateTimestamp: Int!
+  createTimestamp: Int!
+}
+
+type NFTTransaction @entity(immutable: true) {
+  id: Bytes!
+  userAddress: Bytes!
+  nftAddress: Bytes!
+  tokenId: BigInt!
+  soldPrice: BigInt!
+  createTimestamp: Int!
+  transactionHash: Bytes!
 }
