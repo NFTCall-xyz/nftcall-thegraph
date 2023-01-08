@@ -52,3 +52,16 @@ type NFTTransaction @entity(immutable: true) {
   createTimestamp: Int!
   transactionHash: Bytes!
 }
+
+type UserStat @entity {
+  id: ID! #userAddress
+  accumulativeEarnings: BigInt!
+}
+
+type CallPoolStat @entity {
+  id: ID! #callPoolAddress
+  accumulativePremium: BigInt!
+  totalNFTSales: BigInt!
+  totalDepositedNFTs: Int!
+  totalOptionContracts: Int!
+}

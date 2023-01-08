@@ -11,7 +11,13 @@ import {
   CallPool,
 } from "../generated/BAYCCallPool/CallPool";
 import { CallToken } from "../generated/BAYCCallPool/CallToken";
-import { NFT, Position, NFTTransaction } from "../generated/schema";
+import {
+  NFT,
+  Position,
+  NFTTransaction,
+  UserStat,
+  CallPoolStat,
+} from "../generated/schema";
 
 function getNFTId(nftAddress: Bytes, tokenId: BigInt): string {
   const nft = nftAddress.toHexString();
@@ -44,7 +50,40 @@ export function handleCallClosed(event: CallClosedEvent): void {
   nftTransactionRecord.soldPrice = positionRecord.strikePrice;
   nftTransactionRecord.createTimestamp = event.block.timestamp.toI32();
   nftTransactionRecord.transactionHash = event.transaction.hash;
-  nftTransactionRecord.save()
+  nftTransactionRecord.save();
+
+  const userStatsId = nftRecord.userAddress.toHexString();
+  let userStatsRecord = UserStat.load(userStatsId);
+  if (!userStatsRecord) {
+    userStatsRecord = new UserStat(userStatsId);
+    userStatsRecord.accumulativeEarnings = BigInt.fromI32(0);
+  }
+  userStatsRecord.accumulativeEarnings = userStatsRecord.accumulativeEarnings.plus(
+    nftTransactionRecord.soldPrice
+  );
+  userStatsRecord.save();
+
+  const callPoolStatsId = event.address.toHexString();
+  let callPoolStats = CallPoolStat.load(callPoolStatsId);
+  if (!callPoolStats) {
+    callPoolStats = new CallPoolStat(callPoolStatsId);
+    callPoolStats.accumulativePremium = BigInt.fromI32(0);
+    callPoolStats.totalNFTSales = BigInt.fromI32(0);
+    callPoolStats.totalDepositedNFTs = 0;
+    callPoolStats.totalOptionContracts = 0;
+  }
+  callPoolStats.totalDepositedNFTs = callPoolStats.totalDepositedNFTs - 1;
+  if (callPoolStats.totalDepositedNFTs < 0) {
+    callPoolStats.totalDepositedNFTs = 0;
+  }
+
+  callPoolStats.accumulativePremium = callPoolStats.accumulativePremium.plus(
+    positionRecord.premiumToReserve
+  );
+  callPoolStats.totalNFTSales = callPoolStats.totalNFTSales.plus(
+    nftTransactionRecord.soldPrice
+  );
+  callPoolStats.save();
 }
 
 export function handleCallOpened(event: CallOpenedEvent): void {
@@ -78,6 +117,19 @@ export function handleCallOpened(event: CallOpenedEvent): void {
   nftRecord.status = "Called";
   nftRecord.position = positionId;
   nftRecord.save();
+
+  const callPoolStatsId = event.address.toHexString();
+  let callPoolStats = CallPoolStat.load(callPoolStatsId);
+  if (!callPoolStats) {
+    callPoolStats = new CallPoolStat(callPoolStatsId);
+    callPoolStats.accumulativePremium = BigInt.fromI32(0);
+    callPoolStats.totalNFTSales = BigInt.fromI32(0);
+    callPoolStats.totalDepositedNFTs = 0;
+    callPoolStats.totalOptionContracts = 0;
+  }
+
+  callPoolStats.totalOptionContracts = callPoolStats.totalOptionContracts + 1;
+  callPoolStats.save();
 }
 
 export function handleDeposit(event: DepositEvent): void {
@@ -111,6 +163,19 @@ export function handleDeposit(event: DepositEvent): void {
   nftRecord.updateTimestamp = event.block.timestamp.toI32();
 
   nftRecord.save();
+
+  const callPoolStatsId = event.address.toHexString();
+  let callPoolStats = CallPoolStat.load(callPoolStatsId);
+  if (!callPoolStats) {
+    callPoolStats = new CallPoolStat(callPoolStatsId);
+    callPoolStats.accumulativePremium = BigInt.fromI32(0);
+    callPoolStats.totalNFTSales = BigInt.fromI32(0);
+    callPoolStats.totalDepositedNFTs = 0;
+    callPoolStats.totalOptionContracts = 0;
+  }
+  callPoolStats.totalDepositedNFTs = callPoolStats.totalDepositedNFTs + 1;
+
+  callPoolStats.save();
 }
 
 export function handleOffMarket(event: OffMarketEvent): void {
@@ -149,6 +214,21 @@ export function handleWithdraw(event: WithdrawEvent): void {
   nftRecord.status = "Removed";
   nftRecord.updateTimestamp = event.block.timestamp.toI32();
   nftRecord.save();
+
+  const callPoolStatsId = event.address.toHexString();
+  let callPoolStats = CallPoolStat.load(callPoolStatsId);
+  if (!callPoolStats) {
+    callPoolStats = new CallPoolStat(callPoolStatsId);
+    callPoolStats.accumulativePremium = BigInt.fromI32(0);
+    callPoolStats.totalNFTSales = BigInt.fromI32(0);
+    callPoolStats.totalDepositedNFTs = 0;
+    callPoolStats.totalOptionContracts = 0;
+  }
+  callPoolStats.totalDepositedNFTs = callPoolStats.totalDepositedNFTs - 1;
+  if (callPoolStats.totalDepositedNFTs < 0) {
+    callPoolStats.totalDepositedNFTs = 0;
+  }
+  callPoolStats.save();
 }
 
 export function handleWithdrawETH(event: WithdrawETHEvent): void {

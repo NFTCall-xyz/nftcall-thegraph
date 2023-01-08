@@ -359,3 +359,112 @@ export class NFTTransaction extends Entity {
     this.set("transactionHash", Value.fromBytes(value));
   }
 }
+
+export class UserStat extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save UserStat entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type UserStat must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("UserStat", id.toString(), this);
+    }
+  }
+
+  static load(id: string): UserStat | null {
+    return changetype<UserStat | null>(store.get("UserStat", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get accumulativeEarnings(): BigInt {
+    let value = this.get("accumulativeEarnings");
+    return value!.toBigInt();
+  }
+
+  set accumulativeEarnings(value: BigInt) {
+    this.set("accumulativeEarnings", Value.fromBigInt(value));
+  }
+}
+
+export class CallPoolStat extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save CallPoolStat entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type CallPoolStat must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("CallPoolStat", id.toString(), this);
+    }
+  }
+
+  static load(id: string): CallPoolStat | null {
+    return changetype<CallPoolStat | null>(store.get("CallPoolStat", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get accumulativePremium(): BigInt {
+    let value = this.get("accumulativePremium");
+    return value!.toBigInt();
+  }
+
+  set accumulativePremium(value: BigInt) {
+    this.set("accumulativePremium", Value.fromBigInt(value));
+  }
+
+  get totalNFTSales(): BigInt {
+    let value = this.get("totalNFTSales");
+    return value!.toBigInt();
+  }
+
+  set totalNFTSales(value: BigInt) {
+    this.set("totalNFTSales", Value.fromBigInt(value));
+  }
+
+  get totalDepositedNFTs(): i32 {
+    let value = this.get("totalDepositedNFTs");
+    return value!.toI32();
+  }
+
+  set totalDepositedNFTs(value: i32) {
+    this.set("totalDepositedNFTs", Value.fromI32(value));
+  }
+
+  get totalOptionContracts(): i32 {
+    let value = this.get("totalOptionContracts");
+    return value!.toI32();
+  }
+
+  set totalOptionContracts(value: i32) {
+    this.set("totalOptionContracts", Value.fromI32(value));
+  }
+}
