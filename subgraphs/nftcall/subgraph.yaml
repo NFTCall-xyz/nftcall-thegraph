@@ -45,3 +45,47 @@ dataSources:
         - event: WithdrawETH(indexed address,indexed address,uint256)
           handler: handleWithdrawETH
       file: ./src/call-pool.ts
+
+  - kind: ethereum
+    name: MAYCCallPool
+    network: goerli
+    source:
+      address: "0xBd582760d21A8bEdfa8FFfE7666efbb320C30078"
+      abi: CallPool
+      startBlock: 8253709
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CallClosed
+        - CallOpened
+        - Deposit
+        - OffMarket
+        - OnMarket
+        - PremiumReceived
+        - Withdraw
+        - WithdrawETH
+      abis:
+        - name: CallPool
+          file: ./abis/CallPool.json
+        - name: CallToken
+          file: ./abis/CallToken.json
+      eventHandlers:
+        - event: CallClosed(indexed address,indexed address,address,indexed uint256,uint256)
+          handler: handleCallClosed
+        - event: CallOpened(indexed address,indexed address,indexed uint256,uint256,uint256)
+          handler: handleCallOpened
+        - event: Deposit(indexed address,address,indexed address,indexed uint256)
+          handler: handleDeposit
+        - event: OffMarket(indexed address,indexed address,indexed uint256)
+          handler: handleOffMarket
+        - event: OnMarket(indexed address,indexed address,indexed uint256)
+          handler: handleOnMarket
+        - event: PremiumReceived(indexed address,indexed address,indexed uint256,uint256,uint256)
+          handler: handlePremiumReceived
+        - event: Withdraw(indexed address,indexed address,address,indexed uint256)
+          handler: handleWithdraw
+        - event: WithdrawETH(indexed address,indexed address,uint256)
+          handler: handleWithdrawETH
+      file: ./src/call-pool.ts
