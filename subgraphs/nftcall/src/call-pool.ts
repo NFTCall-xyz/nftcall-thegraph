@@ -116,6 +116,7 @@ export function handleCallOpened(event: CallOpenedEvent): void {
   nftRecord.updateTimestamp = event.block.timestamp.toI32();
   nftRecord.status = "Called";
   nftRecord.position = positionId;
+  nftRecord.positionEndTimestamp = positionRecord.endTime;
   nftRecord.save();
 
   const callPoolStatsId = event.address.toHexString();

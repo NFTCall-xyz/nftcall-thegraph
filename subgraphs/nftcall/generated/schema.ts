@@ -95,6 +95,15 @@ export class NFT extends Entity {
     this.set("updateTimestamp", Value.fromI32(value));
   }
 
+  get positionEndTimestamp(): i32 {
+    let value = this.get("positionEndTimestamp");
+    return value!.toI32();
+  }
+
+  set positionEndTimestamp(value: i32) {
+    this.set("positionEndTimestamp", Value.fromI32(value));
+  }
+
   get callPoolAddress(): Bytes {
     let value = this.get("callPoolAddress");
     return value!.toBytes();

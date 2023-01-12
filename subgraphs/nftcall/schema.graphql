@@ -13,6 +13,7 @@ type NFT @entity {
   status: NFTStatus!
   position: Position
   updateTimestamp: Int!
+  positionEndTimestamp: Int
 
   callPoolAddress: Bytes!
   userAddress: Bytes!
