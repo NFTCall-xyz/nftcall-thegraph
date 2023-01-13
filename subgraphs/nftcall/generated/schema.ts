@@ -104,6 +104,15 @@ export class NFT extends Entity {
     this.set("positionEndTimestamp", Value.fromI32(value));
   }
 
+  get callPoolStat(): string {
+    let value = this.get("callPoolStat");
+    return value!.toString();
+  }
+
+  set callPoolStat(value: string) {
+    this.set("callPoolStat", Value.fromString(value));
+  }
+
   get callPoolAddress(): Bytes {
     let value = this.get("callPoolAddress");
     return value!.toBytes();
@@ -408,6 +417,76 @@ export class UserStat extends Entity {
   set accumulativeEarnings(value: BigInt) {
     this.set("accumulativeEarnings", Value.fromBigInt(value));
   }
+
+  get userCallPoolStat(): Array<string> {
+    let value = this.get("userCallPoolStat");
+    return value!.toStringArray();
+  }
+
+  set userCallPoolStat(value: Array<string>) {
+    this.set("userCallPoolStat", Value.fromStringArray(value));
+  }
+}
+
+export class UserCallPoolStat extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save UserCallPoolStat entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type UserCallPoolStat must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("UserCallPoolStat", id.toString(), this);
+    }
+  }
+
+  static load(id: string): UserCallPoolStat | null {
+    return changetype<UserCallPoolStat | null>(
+      store.get("UserCallPoolStat", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get userAddress(): Bytes {
+    let value = this.get("userAddress");
+    return value!.toBytes();
+  }
+
+  set userAddress(value: Bytes) {
+    this.set("userAddress", Value.fromBytes(value));
+  }
+
+  get callPoolAddress(): Bytes {
+    let value = this.get("callPoolAddress");
+    return value!.toBytes();
+  }
+
+  set callPoolAddress(value: Bytes) {
+    this.set("callPoolAddress", Value.fromBytes(value));
+  }
+
+  get accruedEarnings(): BigInt {
+    let value = this.get("accruedEarnings");
+    return value!.toBigInt();
+  }
+
+  set accruedEarnings(value: BigInt) {
+    this.set("accruedEarnings", Value.fromBigInt(value));
+  }
 }
 
 export class CallPoolStat extends Entity {
@@ -475,5 +554,14 @@ export class CallPoolStat extends Entity {
 
   set totalOptionContracts(value: i32) {
     this.set("totalOptionContracts", Value.fromI32(value));
+  }
+
+  get nfts(): Array<string> {
+    let value = this.get("nfts");
+    return value!.toStringArray();
+  }
+
+  set nfts(value: Array<string>) {
+    this.set("nfts", Value.fromStringArray(value));
   }
 }

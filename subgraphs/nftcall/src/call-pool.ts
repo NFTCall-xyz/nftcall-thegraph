@@ -16,6 +16,7 @@ import {
   Position,
   NFTTransaction,
   UserStat,
+  UserCallPoolStat,
   CallPoolStat,
 } from "../generated/schema";
 
@@ -24,6 +25,34 @@ function getNFTId(nftAddress: Bytes, tokenId: BigInt): string {
   const id = tokenId.toHexString();
   return crypto.keccak256(ByteArray.fromUTF8(nft + id)).toHexString();
 }
+function getUserCallPoolStatId(
+  userAddress: Bytes,
+  callPoolAddress: Bytes
+): string {
+  const user = userAddress.toHexString();
+  const callPool = callPoolAddress.toHexString();
+  return crypto.keccak256(ByteArray.fromUTF8(user + callPool)).toHexString();
+}
+function userStatHasUserCallPoolStatId(userStat: UserStat, id: string): i32 {
+  for (let i = 0; i < userStat.userCallPoolStat.length; i++) {
+    if (userStat.userCallPoolStat[i] == id) return i;
+  }
+  return -1;
+}
+function userStatPushUserCallPoolStatId(userStat: UserStat, id: string): void {
+  const array = userStat.userCallPoolStat;
+  array.push(id);
+  userStat.userCallPoolStat = array;
+}
+
+// function userStatRemoveCallPoolStatId(userStat: UserStat, id: string): void {
+//   const array = new Array<string>(0);
+//   for (let i = 0; i < userStat.userCallPoolStat.length; i++) {
+//     if (userStat.userCallPoolStat[i] == id) continue;
+//     array.push(userStat.userCallPoolStat[i]);
+//   }
+//   userStat.userCallPoolStat = array;
+// }
 
 export function handleCallClosed(event: CallClosedEvent): void {
   const nftId = getNFTId(event.params.nft, event.params.tokenId);
@@ -52,18 +81,43 @@ export function handleCallClosed(event: CallClosedEvent): void {
   nftTransactionRecord.transactionHash = event.transaction.hash;
   nftTransactionRecord.save();
 
+  const userCallPoolStatId = getUserCallPoolStatId(
+    nftRecord.userAddress,
+    event.address
+  );
+  let userCallPoolStatRecord = UserCallPoolStat.load(userCallPoolStatId);
+  if (!userCallPoolStatRecord) {
+    userCallPoolStatRecord = new UserCallPoolStat(userCallPoolStatId);
+    userCallPoolStatRecord.userAddress = nftRecord.userAddress;
+    userCallPoolStatRecord.callPoolAddress = event.address;
+    userCallPoolStatRecord.accruedEarnings = BigInt.fromI32(0);
+  }
+
+  userCallPoolStatRecord.accruedEarnings = userCallPoolStatRecord.accruedEarnings.plus(
+    nftTransactionRecord.soldPrice
+  );
+  userCallPoolStatRecord.save();
+
   const userStatsId = nftRecord.userAddress.toHexString();
   let userStatsRecord = UserStat.load(userStatsId);
   if (!userStatsRecord) {
     userStatsRecord = new UserStat(userStatsId);
     userStatsRecord.accumulativeEarnings = BigInt.fromI32(0);
+    userStatsRecord.userCallPoolStat = new Array(0);
+    userStatPushUserCallPoolStatId(userStatsRecord, userCallPoolStatId);
+  } else {
+    if (
+      userStatHasUserCallPoolStatId(userStatsRecord, userCallPoolStatId) === -1
+    ) {
+      userStatPushUserCallPoolStatId(userStatsRecord, userCallPoolStatId);
+    }
   }
   userStatsRecord.accumulativeEarnings = userStatsRecord.accumulativeEarnings.plus(
     nftTransactionRecord.soldPrice
   );
   userStatsRecord.save();
 
-  const callPoolStatsId = event.address.toHexString();
+  const callPoolStatsId = nftRecord.callPoolStat;
   let callPoolStats = CallPoolStat.load(callPoolStatsId);
   if (!callPoolStats) {
     callPoolStats = new CallPoolStat(callPoolStatsId);
@@ -119,7 +173,7 @@ export function handleCallOpened(event: CallOpenedEvent): void {
   nftRecord.positionEndTimestamp = positionRecord.endTime;
   nftRecord.save();
 
-  const callPoolStatsId = event.address.toHexString();
+  const callPoolStatsId = nftRecord.callPoolStat;
   let callPoolStats = CallPoolStat.load(callPoolStatsId);
   if (!callPoolStats) {
     callPoolStats = new CallPoolStat(callPoolStatsId);
@@ -140,6 +194,7 @@ export function handleDeposit(event: DepositEvent): void {
     nftRecord = new NFT(nftId);
     nftRecord.nftAddress = event.params.nft;
     nftRecord.tokenId = event.params.tokenId;
+    nftRecord.callPoolStat = event.address.toHexString();
   }
 
   const callPoolContract = CallPool.bind(event.address);
@@ -165,7 +220,7 @@ export function handleDeposit(event: DepositEvent): void {
 
   nftRecord.save();
 
-  const callPoolStatsId = event.address.toHexString();
+  const callPoolStatsId = nftRecord.callPoolStat;
   let callPoolStats = CallPoolStat.load(callPoolStatsId);
   if (!callPoolStats) {
     callPoolStats = new CallPoolStat(callPoolStatsId);
@@ -216,7 +271,7 @@ export function handleWithdraw(event: WithdrawEvent): void {
   nftRecord.updateTimestamp = event.block.timestamp.toI32();
   nftRecord.save();
 
-  const callPoolStatsId = event.address.toHexString();
+  const callPoolStatsId = nftRecord.callPoolStat;
   let callPoolStats = CallPoolStat.load(callPoolStatsId);
   if (!callPoolStats) {
     callPoolStats = new CallPoolStat(callPoolStatsId);
