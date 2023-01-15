@@ -288,14 +288,39 @@ export function handleWithdraw(event: WithdrawEvent): void {
 }
 
 export function handleWithdrawETH(event: WithdrawETHEvent): void {
-  // let entity = new WithdrawETH(
-  //   event.transaction.hash.concatI32(event.logIndex.toI32())
-  // );
-  // entity.user = event.params.user;
-  // entity.to = event.params.to;
-  // entity.amount = event.params.amount;
-  // entity.blockNumber = event.block.number;
-  // entity.blockTimestamp = event.block.timestamp;
-  // entity.transactionHash = event.transaction.hash;
-  // entity.save();
+  const userCallPoolStatId = getUserCallPoolStatId(
+    event.params.to,
+    event.address
+  );
+  let userCallPoolStatRecord = UserCallPoolStat.load(userCallPoolStatId);
+  if (!userCallPoolStatRecord) {
+    userCallPoolStatRecord = new UserCallPoolStat(userCallPoolStatId);
+    userCallPoolStatRecord.userAddress = event.params.to;
+    userCallPoolStatRecord.callPoolAddress = event.address;
+    userCallPoolStatRecord.accruedEarnings = BigInt.fromI32(0);
+  }
+
+  userCallPoolStatRecord.accruedEarnings = userCallPoolStatRecord.accruedEarnings.plus(
+    event.params.amount
+  );
+  userCallPoolStatRecord.save();
+
+  const userStatsId = event.params.to.toHexString();
+  let userStatsRecord = UserStat.load(userStatsId);
+  if (!userStatsRecord) {
+    userStatsRecord = new UserStat(userStatsId);
+    userStatsRecord.accumulativeEarnings = BigInt.fromI32(0);
+    userStatsRecord.userCallPoolStat = new Array(0);
+    userStatPushUserCallPoolStatId(userStatsRecord, userCallPoolStatId);
+  } else {
+    if (
+      userStatHasUserCallPoolStatId(userStatsRecord, userCallPoolStatId) === -1
+    ) {
+      userStatPushUserCallPoolStatId(userStatsRecord, userCallPoolStatId);
+    }
+  }
+  userStatsRecord.accumulativeEarnings = userStatsRecord.accumulativeEarnings.plus(
+    event.params.amount
+  );
+  userStatsRecord.save();
 }
