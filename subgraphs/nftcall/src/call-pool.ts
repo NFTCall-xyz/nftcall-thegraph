@@ -8,6 +8,7 @@ import {
   PremiumReceived as PremiumReceivedEvent,
   Withdraw as WithdrawEvent,
   WithdrawETH as WithdrawETHEvent,
+  PreferenceUpdated as PreferenceUpdatedEvent,
   CallPool,
 } from "../generated/BAYCCallPool/CallPool";
 import { CallToken } from "../generated/BAYCCallPool/CallToken";
@@ -323,4 +324,14 @@ export function handleWithdrawETH(event: WithdrawETHEvent): void {
     event.params.amount
   );
   userStatsRecord.save();
+}
+
+export function handlePreferenceUpdated(event: PreferenceUpdatedEvent): void {
+  const nftId = getNFTId(event.params.nft, event.params.tokenId);
+  let nftRecord = NFT.load(nftId);
+  if (!nftRecord) return;
+  nftRecord.strikePriceGapIdx = event.params.lowerStrikePriceGapIdx;
+  nftRecord.durationIdx = event.params.upperDurationIdx;
+  nftRecord.updateTimestamp = event.block.timestamp.toI32();
+  nftRecord.save();
 }

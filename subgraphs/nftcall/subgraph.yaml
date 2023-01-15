@@ -6,7 +6,7 @@ dataSources:
     name: BAYCCallPool
     network: goerli
     source:
-      address: "0xc94356592757953674cdf007B09AD02Bf358572C"
+      address: "0x0CF7164E85A369eC9A4ab5397B5aa8d08e7B2555"
       abi: CallPool
       startBlock: 8303056
     mapping:
@@ -44,13 +44,15 @@ dataSources:
           handler: handleWithdraw
         - event: WithdrawETH(indexed address,indexed address,uint256)
           handler: handleWithdrawETH
+        - event: PreferenceUpdated(indexed address,indexed uint256,uint8,uint8,uint256)
+          handler: handlePreferenceUpdated
       file: ./src/call-pool.ts
 
   - kind: ethereum
     name: MAYCCallPool
     network: goerli
     source:
-      address: "0x88898d1596204a25C93CE4832D3fB98A99058Fe8"
+      address: "0x25127Dd2188646EEad82af28F835F7E748740f49"
       abi: CallPool
       startBlock: 8303056
     mapping:
@@ -88,4 +90,6 @@ dataSources:
           handler: handleWithdraw
         - event: WithdrawETH(indexed address,indexed address,uint256)
           handler: handleWithdrawETH
+        - event: PreferenceUpdated(indexed address,indexed uint256,uint8,uint8,uint256)
+          handler: handlePreferenceUpdated
       file: ./src/call-pool.ts

@@ -252,6 +252,40 @@ export class Paused__Params {
   }
 }
 
+export class PreferenceUpdated extends ethereum.Event {
+  get params(): PreferenceUpdated__Params {
+    return new PreferenceUpdated__Params(this);
+  }
+}
+
+export class PreferenceUpdated__Params {
+  _event: PreferenceUpdated;
+
+  constructor(event: PreferenceUpdated) {
+    this._event = event;
+  }
+
+  get nft(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get lowerStrikePriceGapIdx(): i32 {
+    return this._event.parameters[2].value.toI32();
+  }
+
+  get upperDurationIdx(): i32 {
+    return this._event.parameters[3].value.toI32();
+  }
+
+  get lowerLimitOfStrikePrice(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
+  }
+}
+
 export class PremiumReceived extends ethereum.Event {
   get params(): PremiumReceived__Params {
     return new PremiumReceived__Params(this);
@@ -794,6 +828,29 @@ export class CallPool extends ethereum.SmartContract {
         value[3].toBigInt()
       )
     );
+  }
+
+  totalOpenInterest(): BigInt {
+    let result = super.call(
+      "totalOpenInterest",
+      "totalOpenInterest():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_totalOpenInterest(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "totalOpenInterest",
+      "totalOpenInterest():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   withdrawETH(to: Address, amount: BigInt): BigInt {
