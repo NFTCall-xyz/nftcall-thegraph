@@ -27,6 +27,8 @@ dataSources:
           file: ./abis/CallPool.json
         - name: CallToken
           file: ./abis/CallToken.json
+        - name: NFTOracle
+          file: ./abis/NFTOracle.json
       eventHandlers:
         - event: CallClosed(indexed address,indexed address,address,indexed uint256,uint256)
           handler: handleCallClosed
@@ -73,6 +75,8 @@ dataSources:
           file: ./abis/CallPool.json
         - name: CallToken
           file: ./abis/CallToken.json
+        - name: NFTOracle
+          file: ./abis/NFTOracle.json
       eventHandlers:
         - event: CallClosed(indexed address,indexed address,address,indexed uint256,uint256)
           handler: handleCallClosed

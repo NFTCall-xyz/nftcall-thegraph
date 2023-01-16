@@ -529,13 +529,13 @@ export class CallPoolStat extends Entity {
     this.set("accumulativePremium", Value.fromBigInt(value));
   }
 
-  get totalNFTSales(): BigInt {
-    let value = this.get("totalNFTSales");
+  get totalTradingVolume(): BigInt {
+    let value = this.get("totalTradingVolume");
     return value!.toBigInt();
   }
 
-  set totalNFTSales(value: BigInt) {
-    this.set("totalNFTSales", Value.fromBigInt(value));
+  set totalTradingVolume(value: BigInt) {
+    this.set("totalTradingVolume", Value.fromBigInt(value));
   }
 
   get totalDepositedNFTs(): i32 {

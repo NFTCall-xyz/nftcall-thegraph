@@ -12,6 +12,7 @@ import {
   CallPool,
 } from "../generated/BAYCCallPool/CallPool";
 import { CallToken } from "../generated/BAYCCallPool/CallToken";
+import { NFTOracle } from "../generated/BAYCCallPool/NFTOracle";
 import {
   NFT,
   Position,
@@ -123,7 +124,7 @@ export function handleCallClosed(event: CallClosedEvent): void {
   if (!callPoolStats) {
     callPoolStats = new CallPoolStat(callPoolStatsId);
     callPoolStats.accumulativePremium = BigInt.fromI32(0);
-    callPoolStats.totalNFTSales = BigInt.fromI32(0);
+    callPoolStats.totalTradingVolume = BigInt.fromI32(0);
     callPoolStats.totalDepositedNFTs = 0;
     callPoolStats.totalOptionContracts = 0;
   }
@@ -134,9 +135,6 @@ export function handleCallClosed(event: CallClosedEvent): void {
 
   callPoolStats.accumulativePremium = callPoolStats.accumulativePremium.plus(
     positionRecord.premiumToReserve
-  );
-  callPoolStats.totalNFTSales = callPoolStats.totalNFTSales.plus(
-    nftTransactionRecord.soldPrice
   );
   callPoolStats.save();
 }
@@ -179,12 +177,18 @@ export function handleCallOpened(event: CallOpenedEvent): void {
   if (!callPoolStats) {
     callPoolStats = new CallPoolStat(callPoolStatsId);
     callPoolStats.accumulativePremium = BigInt.fromI32(0);
-    callPoolStats.totalNFTSales = BigInt.fromI32(0);
+    callPoolStats.totalTradingVolume = BigInt.fromI32(0);
     callPoolStats.totalDepositedNFTs = 0;
     callPoolStats.totalOptionContracts = 0;
   }
 
   callPoolStats.totalOptionContracts = callPoolStats.totalOptionContracts + 1;
+  const nftOracleAddress = callPoolContract.oracle();
+  const nftOracleContract = NFTOracle.bind(nftOracleAddress);
+  const floorPrice = nftOracleContract.getAssetPrice(event.params.nft);
+  callPoolStats.totalTradingVolume = callPoolStats.totalTradingVolume.plus(
+    floorPrice
+  );
   callPoolStats.save();
 }
 
@@ -226,7 +230,7 @@ export function handleDeposit(event: DepositEvent): void {
   if (!callPoolStats) {
     callPoolStats = new CallPoolStat(callPoolStatsId);
     callPoolStats.accumulativePremium = BigInt.fromI32(0);
-    callPoolStats.totalNFTSales = BigInt.fromI32(0);
+    callPoolStats.totalTradingVolume = BigInt.fromI32(0);
     callPoolStats.totalDepositedNFTs = 0;
     callPoolStats.totalOptionContracts = 0;
   }
@@ -277,7 +281,7 @@ export function handleWithdraw(event: WithdrawEvent): void {
   if (!callPoolStats) {
     callPoolStats = new CallPoolStat(callPoolStatsId);
     callPoolStats.accumulativePremium = BigInt.fromI32(0);
-    callPoolStats.totalNFTSales = BigInt.fromI32(0);
+    callPoolStats.totalTradingVolume = BigInt.fromI32(0);
     callPoolStats.totalDepositedNFTs = 0;
     callPoolStats.totalOptionContracts = 0;
   }
