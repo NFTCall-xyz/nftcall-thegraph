@@ -151,6 +151,7 @@ export function handleCallOpened(event: CallOpenedEvent): void {
   positionRecord.nftAddress = event.params.nft;
   positionRecord.tokenId = event.params.tokenId;
   positionRecord.callPoolAddress = event.address;
+  positionRecord.nftOwnerAddress = nftRecord.userAddress;
   const callPoolContract = CallPool.bind(event.address);
   const callTokenAddress = callPoolContract.callToken();
   const callTokenContract = CallToken.bind(callTokenAddress);

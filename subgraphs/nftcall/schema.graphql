@@ -29,6 +29,7 @@ enum PositionStatus {
 }
 type Position @entity {
   id: ID!
+  nftOwnerAddress: Bytes!
   userAddress: Bytes!
   nftAddress: Bytes!
   tokenId: BigInt!

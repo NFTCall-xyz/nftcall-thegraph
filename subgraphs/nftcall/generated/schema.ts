@@ -181,6 +181,15 @@ export class Position extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get nftOwnerAddress(): Bytes {
+    let value = this.get("nftOwnerAddress");
+    return value!.toBytes();
+  }
+
+  set nftOwnerAddress(value: Bytes) {
+    this.set("nftOwnerAddress", Value.fromBytes(value));
+  }
+
   get userAddress(): Bytes {
     let value = this.get("userAddress");
     return value!.toBytes();
