@@ -148,6 +148,15 @@ export class NFT extends Entity {
   set durationIdx(value: i32) {
     this.set("durationIdx", Value.fromI32(value));
   }
+
+  get lowerLimitOfStrikePrice(): BigInt {
+    let value = this.get("lowerLimitOfStrikePrice");
+    return value!.toBigInt();
+  }
+
+  set lowerLimitOfStrikePrice(value: BigInt) {
+    this.set("lowerLimitOfStrikePrice", Value.fromBigInt(value));
+  }
 }
 
 export class Position extends Entity {

@@ -217,6 +217,7 @@ export function handleDeposit(event: DepositEvent): void {
 
   nftRecord.strikePriceGapIdx = NFTStatus.value2;
   nftRecord.durationIdx = NFTStatus.value3;
+  nftRecord.lowerLimitOfStrikePrice = NFTStatus.value4;
 
   nftRecord.userAddress = event.params.onBehalfOf;
   nftRecord.callPoolAddress = event.address;
@@ -337,6 +338,7 @@ export function handlePreferenceUpdated(event: PreferenceUpdatedEvent): void {
   if (!nftRecord) return;
   nftRecord.strikePriceGapIdx = event.params.lowerStrikePriceGapIdx;
   nftRecord.durationIdx = event.params.upperDurationIdx;
+  nftRecord.lowerLimitOfStrikePrice = event.params.lowerLimitOfStrikePrice;
   nftRecord.updateTimestamp = event.block.timestamp.toI32();
   nftRecord.save();
 }
