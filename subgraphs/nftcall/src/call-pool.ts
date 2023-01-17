@@ -94,10 +94,6 @@ export function handleCallClosed(event: CallClosedEvent): void {
     userCallPoolStatRecord.callPoolAddress = event.address;
     userCallPoolStatRecord.accruedEarnings = BigInt.fromI32(0);
   }
-
-  userCallPoolStatRecord.accruedEarnings = userCallPoolStatRecord.accruedEarnings.plus(
-    nftTransactionRecord.soldPrice
-  );
   userCallPoolStatRecord.save();
 
   const userStatsId = nftRecord.userAddress.toHexString();
@@ -114,9 +110,6 @@ export function handleCallClosed(event: CallClosedEvent): void {
       userStatPushUserCallPoolStatId(userStatsRecord, userCallPoolStatId);
     }
   }
-  userStatsRecord.accumulativeEarnings = userStatsRecord.accumulativeEarnings.plus(
-    nftTransactionRecord.soldPrice
-  );
   userStatsRecord.save();
 
   const callPoolStatsId = nftRecord.callPoolStat;
@@ -133,9 +126,6 @@ export function handleCallClosed(event: CallClosedEvent): void {
     callPoolStats.totalDepositedNFTs = 0;
   }
 
-  callPoolStats.accumulativePremium = callPoolStats.accumulativePremium.plus(
-    positionRecord.premiumToReserve
-  );
   callPoolStats.save();
 }
 
@@ -189,6 +179,9 @@ export function handleCallOpened(event: CallOpenedEvent): void {
   const floorPrice = nftOracleContract.getAssetPrice(event.params.nft);
   callPoolStats.totalTradingVolume = callPoolStats.totalTradingVolume.plus(
     floorPrice
+  );
+  callPoolStats.accumulativePremium = callPoolStats.accumulativePremium.plus(
+    positionRecord.premiumToReserve
   );
   callPoolStats.save();
 }
