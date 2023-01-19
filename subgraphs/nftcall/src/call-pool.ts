@@ -264,6 +264,7 @@ export function handlePremiumReceived(event: PremiumReceivedEvent): void {
   callPoolStats.accumulativePremium = callPoolStats.accumulativePremium.plus(
     positionRecord.premiumToReserve
   );
+  callPoolStats.save();
 }
 
 export function handleWithdraw(event: WithdrawEvent): void {
