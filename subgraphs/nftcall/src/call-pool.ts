@@ -180,9 +180,6 @@ export function handleCallOpened(event: CallOpenedEvent): void {
   callPoolStats.totalTradingVolume = callPoolStats.totalTradingVolume.plus(
     floorPrice
   );
-  callPoolStats.accumulativePremium = callPoolStats.accumulativePremium.plus(
-    positionRecord.premiumToReserve
-  );
   callPoolStats.save();
 }
 
@@ -261,6 +258,12 @@ export function handlePremiumReceived(event: PremiumReceivedEvent): void {
   positionRecord.premiumToOwner = event.params.premiumToOwner;
   positionRecord.premiumToReserve = event.params.premiumToReserve;
   positionRecord.save();
+  const callPoolStatsId = nftRecord.callPoolStat;
+  let callPoolStats = CallPoolStat.load(callPoolStatsId);
+  if (!callPoolStats) return;
+  callPoolStats.accumulativePremium = callPoolStats.accumulativePremium.plus(
+    positionRecord.premiumToReserve
+  );
 }
 
 export function handleWithdraw(event: WithdrawEvent): void {
