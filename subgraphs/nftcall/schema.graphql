@@ -38,6 +38,7 @@ type Position @entity {
   callPoolAddress: Bytes!
   exerciseTime: Int!
   endTime: Int!
+  floorPrice: BigInt!
   strikePrice: BigInt!
   premiumToOwner: BigInt!
   premiumToReserve: BigInt!

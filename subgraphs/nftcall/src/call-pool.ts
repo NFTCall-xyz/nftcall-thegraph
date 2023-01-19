@@ -63,6 +63,13 @@ export function handleCallClosed(event: CallClosedEvent): void {
   const positionRecord = Position.load(nftRecord.position!);
   if (!positionRecord) return;
   positionRecord.status = "Exercised";
+
+  const callPoolContract = CallPool.bind(event.address);
+  const nftOracleAddress = callPoolContract.oracle();
+  const nftOracleContract = NFTOracle.bind(nftOracleAddress);
+  const floorPrice = nftOracleContract.getAssetPrice(event.params.nft);
+  positionRecord.floorPrice = floorPrice;
+
   positionRecord.updateTimestamp = event.block.timestamp.toI32();
   positionRecord.save();
 
@@ -150,6 +157,7 @@ export function handleCallOpened(event: CallOpenedEvent): void {
   positionRecord.exerciseTime = callInfo.exerciseTime.toI32();
   positionRecord.endTime = callInfo.endTime.toI32();
   positionRecord.strikePrice = callInfo.strikePrice;
+  positionRecord.floorPrice = BigInt.fromI32(0);
   positionRecord.status = "Unexercised";
   positionRecord.updateTimestamp = event.block.timestamp.toI32();
   positionRecord.createTimestamp = event.block.timestamp.toI32();

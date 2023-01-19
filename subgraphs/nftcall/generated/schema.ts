@@ -253,6 +253,15 @@ export class Position extends Entity {
     this.set("endTime", Value.fromI32(value));
   }
 
+  get floorPrice(): BigInt {
+    let value = this.get("floorPrice");
+    return value!.toBigInt();
+  }
+
+  set floorPrice(value: BigInt) {
+    this.set("floorPrice", Value.fromBigInt(value));
+  }
+
   get strikePrice(): BigInt {
     let value = this.get("strikePrice");
     return value!.toBigInt();
