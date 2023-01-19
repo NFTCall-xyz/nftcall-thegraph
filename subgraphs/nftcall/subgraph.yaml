@@ -6,9 +6,9 @@ dataSources:
     name: BAYCCallPool
     network: goerli
     source:
-      address: "0x1f58A80cec63A64cB2a9384b0eE6C1EaD849B136"
+      address: "0xb44c94f3A2AA87E48554ba99c5aE6A839139F664"
       abi: CallPool
-      startBlock: 8303056
+      startBlock: 8331932
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -54,9 +54,9 @@ dataSources:
     name: MAYCCallPool
     network: goerli
     source:
-      address: "0x4EA7687908346fE3672f5329591D4D343816B4Ed"
+      address: "0x7b4057c09b7ceB5861b2Ee993E8B9e193b98612c"
       abi: CallPool
-      startBlock: 8303056
+      startBlock: 8331932
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
