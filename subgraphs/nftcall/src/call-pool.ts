@@ -1,4 +1,4 @@
-import { BigInt, ByteArray, Bytes, crypto } from "@graphprotocol/graph-ts";
+import { BigInt } from "@graphprotocol/graph-ts";
 import {
   CallClosed as CallClosedEvent,
   CallOpened as CallOpenedEvent,
@@ -17,44 +17,10 @@ import {
   NFT,
   Position,
   NFTTransaction,
-  UserStat,
-  UserCallPoolStat,
   CallPoolStat,
 } from "../generated/schema";
-
-function getNFTId(nftAddress: Bytes, tokenId: BigInt): string {
-  const nft = nftAddress.toHexString();
-  const id = tokenId.toHexString();
-  return crypto.keccak256(ByteArray.fromUTF8(nft + id)).toHexString();
-}
-function getUserCallPoolStatId(
-  userAddress: Bytes,
-  callPoolAddress: Bytes
-): string {
-  const user = userAddress.toHexString();
-  const callPool = callPoolAddress.toHexString();
-  return crypto.keccak256(ByteArray.fromUTF8(user + callPool)).toHexString();
-}
-function userStatHasUserCallPoolStatId(userStat: UserStat, id: string): i32 {
-  for (let i = 0; i < userStat.userCallPoolStat.length; i++) {
-    if (userStat.userCallPoolStat[i] == id) return i;
-  }
-  return -1;
-}
-function userStatPushUserCallPoolStatId(userStat: UserStat, id: string): void {
-  const array = userStat.userCallPoolStat;
-  array.push(id);
-  userStat.userCallPoolStat = array;
-}
-
-// function userStatRemoveCallPoolStatId(userStat: UserStat, id: string): void {
-//   const array = new Array<string>(0);
-//   for (let i = 0; i < userStat.userCallPoolStat.length; i++) {
-//     if (userStat.userCallPoolStat[i] == id) continue;
-//     array.push(userStat.userCallPoolStat[i]);
-//   }
-//   userStat.userCallPoolStat = array;
-// }
+import { getNFTId } from "./adapter/nft";
+import { addUserAccruedEarnings } from "./adapter/stat";
 
 export function handleCallClosed(event: CallClosedEvent): void {
   const nftId = getNFTId(event.params.nft, event.params.tokenId);
@@ -85,39 +51,10 @@ export function handleCallClosed(event: CallClosedEvent): void {
   nftTransactionRecord.nftAddress = nftRecord.nftAddress;
   nftTransactionRecord.tokenId = nftRecord.tokenId;
 
-  nftTransactionRecord.soldPrice = positionRecord.strikePrice;
+  nftTransactionRecord.soldPrice = event.params.price;
   nftTransactionRecord.createTimestamp = event.block.timestamp.toI32();
   nftTransactionRecord.transactionHash = event.transaction.hash;
   nftTransactionRecord.save();
-
-  const userCallPoolStatId = getUserCallPoolStatId(
-    nftRecord.userAddress,
-    event.address
-  );
-  let userCallPoolStatRecord = UserCallPoolStat.load(userCallPoolStatId);
-  if (!userCallPoolStatRecord) {
-    userCallPoolStatRecord = new UserCallPoolStat(userCallPoolStatId);
-    userCallPoolStatRecord.userAddress = nftRecord.userAddress;
-    userCallPoolStatRecord.callPoolAddress = event.address;
-    userCallPoolStatRecord.accruedEarnings = BigInt.fromI32(0);
-  }
-  userCallPoolStatRecord.save();
-
-  const userStatsId = nftRecord.userAddress.toHexString();
-  let userStatsRecord = UserStat.load(userStatsId);
-  if (!userStatsRecord) {
-    userStatsRecord = new UserStat(userStatsId);
-    userStatsRecord.accumulativeEarnings = BigInt.fromI32(0);
-    userStatsRecord.userCallPoolStat = new Array(0);
-    userStatPushUserCallPoolStatId(userStatsRecord, userCallPoolStatId);
-  } else {
-    if (
-      userStatHasUserCallPoolStatId(userStatsRecord, userCallPoolStatId) === -1
-    ) {
-      userStatPushUserCallPoolStatId(userStatsRecord, userCallPoolStatId);
-    }
-  }
-  userStatsRecord.save();
 
   const callPoolStatsId = nftRecord.callPoolStat;
   let callPoolStats = CallPoolStat.load(callPoolStatsId);
@@ -134,6 +71,12 @@ export function handleCallClosed(event: CallClosedEvent): void {
   }
 
   callPoolStats.save();
+
+  addUserAccruedEarnings(
+    positionRecord.nftOwnerAddress,
+    event.address,
+    event.params.price
+  );
 }
 
 export function handleCallOpened(event: CallOpenedEvent): void {
@@ -273,6 +216,12 @@ export function handlePremiumReceived(event: PremiumReceivedEvent): void {
     positionRecord.premiumToReserve
   );
   callPoolStats.save();
+
+  addUserAccruedEarnings(
+    positionRecord.nftOwnerAddress,
+    event.address,
+    event.params.premiumToOwner
+  );
 }
 
 export function handleWithdraw(event: WithdrawEvent): void {
@@ -299,43 +248,7 @@ export function handleWithdraw(event: WithdrawEvent): void {
   callPoolStats.save();
 }
 
-export function handleWithdrawETH(event: WithdrawETHEvent): void {
-  const userCallPoolStatId = getUserCallPoolStatId(
-    event.params.to,
-    event.address
-  );
-  let userCallPoolStatRecord = UserCallPoolStat.load(userCallPoolStatId);
-  if (!userCallPoolStatRecord) {
-    userCallPoolStatRecord = new UserCallPoolStat(userCallPoolStatId);
-    userCallPoolStatRecord.userAddress = event.params.to;
-    userCallPoolStatRecord.callPoolAddress = event.address;
-    userCallPoolStatRecord.accruedEarnings = BigInt.fromI32(0);
-  }
-
-  userCallPoolStatRecord.accruedEarnings = userCallPoolStatRecord.accruedEarnings.plus(
-    event.params.amount
-  );
-  userCallPoolStatRecord.save();
-
-  const userStatsId = event.params.to.toHexString();
-  let userStatsRecord = UserStat.load(userStatsId);
-  if (!userStatsRecord) {
-    userStatsRecord = new UserStat(userStatsId);
-    userStatsRecord.accumulativeEarnings = BigInt.fromI32(0);
-    userStatsRecord.userCallPoolStat = new Array(0);
-    userStatPushUserCallPoolStatId(userStatsRecord, userCallPoolStatId);
-  } else {
-    if (
-      userStatHasUserCallPoolStatId(userStatsRecord, userCallPoolStatId) === -1
-    ) {
-      userStatPushUserCallPoolStatId(userStatsRecord, userCallPoolStatId);
-    }
-  }
-  userStatsRecord.accumulativeEarnings = userStatsRecord.accumulativeEarnings.plus(
-    event.params.amount
-  );
-  userStatsRecord.save();
-}
+export function handleWithdrawETH(event: WithdrawETHEvent): void {}
 
 export function handlePreferenceUpdated(event: PreferenceUpdatedEvent): void {
   const nftId = getNFTId(event.params.nft, event.params.tokenId);
