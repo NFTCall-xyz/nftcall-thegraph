@@ -13,14 +13,10 @@ import {
 } from "../generated/BAYCCallPool/CallPool";
 import { CallToken } from "../generated/BAYCCallPool/CallToken";
 import { NFTOracle } from "../generated/BAYCCallPool/NFTOracle";
-import {
-  NFT,
-  Position,
-  NFTTransaction,
-  CallPoolStat,
-} from "../generated/schema";
+import { NFT, Position, NFTTransaction } from "../generated/schema";
 import { getNFTId } from "./adapter/nft";
-import { addUserAccruedEarnings } from "./adapter/stat";
+import { getCallPoolStats, setTotalDepositedNFTs } from "./adapter/stat";
+import { addUserAccruedEarnings } from "./adapter/userStat";
 
 export function handleCallClosed(event: CallClosedEvent): void {
   const nftId = getNFTId(event.params.nft, event.params.tokenId);
@@ -57,18 +53,8 @@ export function handleCallClosed(event: CallClosedEvent): void {
   nftTransactionRecord.save();
 
   const callPoolStatsId = nftRecord.callPoolStat;
-  let callPoolStats = CallPoolStat.load(callPoolStatsId);
-  if (!callPoolStats) {
-    callPoolStats = new CallPoolStat(callPoolStatsId);
-    callPoolStats.accumulativePremium = BigInt.fromI32(0);
-    callPoolStats.totalTradingVolume = BigInt.fromI32(0);
-    callPoolStats.totalDepositedNFTs = 0;
-    callPoolStats.totalOptionContracts = 0;
-  }
-  callPoolStats.totalDepositedNFTs = callPoolStats.totalDepositedNFTs - 1;
-  if (callPoolStats.totalDepositedNFTs < 0) {
-    callPoolStats.totalDepositedNFTs = 0;
-  }
+  const callPoolStats = getCallPoolStats(callPoolStatsId);
+  setTotalDepositedNFTs(callPoolStats, -1);
 
   callPoolStats.save();
 
@@ -115,14 +101,7 @@ export function handleCallOpened(event: CallOpenedEvent): void {
   nftRecord.save();
 
   const callPoolStatsId = nftRecord.callPoolStat;
-  let callPoolStats = CallPoolStat.load(callPoolStatsId);
-  if (!callPoolStats) {
-    callPoolStats = new CallPoolStat(callPoolStatsId);
-    callPoolStats.accumulativePremium = BigInt.fromI32(0);
-    callPoolStats.totalTradingVolume = BigInt.fromI32(0);
-    callPoolStats.totalDepositedNFTs = 0;
-    callPoolStats.totalOptionContracts = 0;
-  }
+  const callPoolStats = getCallPoolStats(callPoolStatsId);
 
   callPoolStats.totalOptionContracts = callPoolStats.totalOptionContracts + 1;
   const nftOracleAddress = callPoolContract.oracle();
@@ -169,15 +148,8 @@ export function handleDeposit(event: DepositEvent): void {
   nftRecord.save();
 
   const callPoolStatsId = nftRecord.callPoolStat;
-  let callPoolStats = CallPoolStat.load(callPoolStatsId);
-  if (!callPoolStats) {
-    callPoolStats = new CallPoolStat(callPoolStatsId);
-    callPoolStats.accumulativePremium = BigInt.fromI32(0);
-    callPoolStats.totalTradingVolume = BigInt.fromI32(0);
-    callPoolStats.totalDepositedNFTs = 0;
-    callPoolStats.totalOptionContracts = 0;
-  }
-  callPoolStats.totalDepositedNFTs = callPoolStats.totalDepositedNFTs + 1;
+  const callPoolStats = getCallPoolStats(callPoolStatsId);
+  setTotalDepositedNFTs(callPoolStats, 1);
 
   callPoolStats.save();
 }
@@ -210,8 +182,7 @@ export function handlePremiumReceived(event: PremiumReceivedEvent): void {
   positionRecord.premiumToReserve = event.params.premiumToReserve;
   positionRecord.save();
   const callPoolStatsId = nftRecord.callPoolStat;
-  let callPoolStats = CallPoolStat.load(callPoolStatsId);
-  if (!callPoolStats) return;
+  const callPoolStats = getCallPoolStats(callPoolStatsId);
   callPoolStats.accumulativePremium = callPoolStats.accumulativePremium.plus(
     positionRecord.premiumToReserve
   );
@@ -233,18 +204,8 @@ export function handleWithdraw(event: WithdrawEvent): void {
   nftRecord.save();
 
   const callPoolStatsId = nftRecord.callPoolStat;
-  let callPoolStats = CallPoolStat.load(callPoolStatsId);
-  if (!callPoolStats) {
-    callPoolStats = new CallPoolStat(callPoolStatsId);
-    callPoolStats.accumulativePremium = BigInt.fromI32(0);
-    callPoolStats.totalTradingVolume = BigInt.fromI32(0);
-    callPoolStats.totalDepositedNFTs = 0;
-    callPoolStats.totalOptionContracts = 0;
-  }
-  callPoolStats.totalDepositedNFTs = callPoolStats.totalDepositedNFTs - 1;
-  if (callPoolStats.totalDepositedNFTs < 0) {
-    callPoolStats.totalDepositedNFTs = 0;
-  }
+  const callPoolStats = getCallPoolStats(callPoolStatsId);
+  setTotalDepositedNFTs(callPoolStats, -1);
   callPoolStats.save();
 }
 
