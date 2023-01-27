@@ -15,7 +15,11 @@ import { CallToken } from "../generated/BAYCCallPool/CallToken";
 import { NFTOracle } from "../generated/BAYCCallPool/NFTOracle";
 import { NFT, Position, NFTTransaction } from "../generated/schema";
 import { getNFTId } from "./adapter/nft";
-import { getCallPoolStats, setTotalDepositedNFTs } from "./adapter/stat";
+import {
+  getCallPoolStats,
+  setTotalDepositedNFTs,
+  setTotalListedNFTs,
+} from "./adapter/stat";
 import { addUserAccruedEarnings } from "./adapter/userStat";
 
 export function handleCallClosed(event: CallClosedEvent): void {
@@ -55,6 +59,7 @@ export function handleCallClosed(event: CallClosedEvent): void {
   const callPoolStatsId = nftRecord.callPoolStat;
   const callPoolStats = getCallPoolStats(callPoolStatsId);
   setTotalDepositedNFTs(callPoolStats, -1);
+  setTotalListedNFTs(callPoolStats, -1);
 
   callPoolStats.save();
 
@@ -103,7 +108,6 @@ export function handleCallOpened(event: CallOpenedEvent): void {
   const callPoolStatsId = nftRecord.callPoolStat;
   const callPoolStats = getCallPoolStats(callPoolStatsId);
 
-  callPoolStats.totalOptionContracts = callPoolStats.totalOptionContracts + 1;
   const nftOracleAddress = callPoolContract.oracle();
   const nftOracleContract = NFTOracle.bind(nftOracleAddress);
   const floorPrice = nftOracleContract.getAssetPrice(event.params.nft);
@@ -150,6 +154,7 @@ export function handleDeposit(event: DepositEvent): void {
   const callPoolStatsId = nftRecord.callPoolStat;
   const callPoolStats = getCallPoolStats(callPoolStatsId);
   setTotalDepositedNFTs(callPoolStats, 1);
+  setTotalListedNFTs(callPoolStats, 1);
 
   callPoolStats.save();
 }
@@ -161,6 +166,12 @@ export function handleOffMarket(event: OffMarketEvent): void {
   nftRecord.status = "Deposited";
   nftRecord.updateTimestamp = event.block.timestamp.toI32();
   nftRecord.save();
+
+  const callPoolStatsId = nftRecord.callPoolStat;
+  const callPoolStats = getCallPoolStats(callPoolStatsId);
+  setTotalListedNFTs(callPoolStats, -1);
+
+  callPoolStats.save();
 }
 
 export function handleOnMarket(event: OnMarketEvent): void {
@@ -170,6 +181,12 @@ export function handleOnMarket(event: OnMarketEvent): void {
   nftRecord.status = "Listed";
   nftRecord.updateTimestamp = event.block.timestamp.toI32();
   nftRecord.save();
+
+  const callPoolStatsId = nftRecord.callPoolStat;
+  const callPoolStats = getCallPoolStats(callPoolStatsId);
+  setTotalListedNFTs(callPoolStats, 1);
+
+  callPoolStats.save();
 }
 
 export function handlePremiumReceived(event: PremiumReceivedEvent): void {
@@ -199,14 +216,17 @@ export function handleWithdraw(event: WithdrawEvent): void {
   const nftId = getNFTId(event.params.nft, event.params.tokenId);
   let nftRecord = NFT.load(nftId);
   if (!nftRecord) return;
-  nftRecord.status = "Removed";
-  nftRecord.updateTimestamp = event.block.timestamp.toI32();
-  nftRecord.save();
-
   const callPoolStatsId = nftRecord.callPoolStat;
   const callPoolStats = getCallPoolStats(callPoolStatsId);
   setTotalDepositedNFTs(callPoolStats, -1);
+  if (nftRecord.status === "Listed" || nftRecord.status === "Called") {
+    setTotalListedNFTs(callPoolStats, -1);
+  }
   callPoolStats.save();
+
+  nftRecord.status = "Removed";
+  nftRecord.updateTimestamp = event.block.timestamp.toI32();
+  nftRecord.save();
 }
 
 export function handleWithdrawETH(event: WithdrawETHEvent): void {}

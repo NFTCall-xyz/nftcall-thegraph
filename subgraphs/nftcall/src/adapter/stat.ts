@@ -11,6 +11,16 @@ export function setTotalDepositedNFTs(
   }
 }
 
+export function setTotalListedNFTs(
+  callPoolStats: CallPoolStat,
+  value: i32
+): void {
+  callPoolStats.totalListedNFTs = callPoolStats.totalListedNFTs + value;
+  if (callPoolStats.totalListedNFTs < 0) {
+    callPoolStats.totalListedNFTs = 0;
+  }
+}
+
 export function getCallPoolStats(callPoolStatsId: string): CallPoolStat {
   let callPoolStats = CallPoolStat.load(callPoolStatsId);
   if (!callPoolStats) {
@@ -18,7 +28,7 @@ export function getCallPoolStats(callPoolStatsId: string): CallPoolStat {
     callPoolStats.accumulativePremium = BigInt.fromI32(0);
     callPoolStats.totalTradingVolume = BigInt.fromI32(0);
     callPoolStats.totalDepositedNFTs = 0;
-    callPoolStats.totalOptionContracts = 0;
+    callPoolStats.totalListedNFTs = 0;
   }
   return callPoolStats;
 }

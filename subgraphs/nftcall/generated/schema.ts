@@ -574,13 +574,13 @@ export class CallPoolStat extends Entity {
     this.set("totalDepositedNFTs", Value.fromI32(value));
   }
 
-  get totalOptionContracts(): i32 {
-    let value = this.get("totalOptionContracts");
+  get totalListedNFTs(): i32 {
+    let value = this.get("totalListedNFTs");
     return value!.toI32();
   }
 
-  set totalOptionContracts(value: i32) {
-    this.set("totalOptionContracts", Value.fromI32(value));
+  set totalListedNFTs(value: i32) {
+    this.set("totalListedNFTs", Value.fromI32(value));
   }
 
   get nfts(): Array<string> {

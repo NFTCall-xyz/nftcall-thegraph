@@ -77,6 +77,6 @@ type CallPoolStat @entity {
   accumulativePremium: BigInt!
   totalTradingVolume: BigInt!
   totalDepositedNFTs: Int!
-  totalOptionContracts: Int!
+  totalListedNFTs: Int!
   nfts: [NFT!]! @derivedFrom(field: "callPoolStat")
 }
