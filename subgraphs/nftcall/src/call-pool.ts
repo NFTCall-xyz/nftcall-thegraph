@@ -216,17 +216,18 @@ export function handleWithdraw(event: WithdrawEvent): void {
   const nftId = getNFTId(event.params.nft, event.params.tokenId);
   let nftRecord = NFT.load(nftId);
   if (!nftRecord) return;
-  const callPoolStatsId = nftRecord.callPoolStat;
-  const callPoolStats = getCallPoolStats(callPoolStatsId);
-  setTotalDepositedNFTs(callPoolStats, -1);
-  if (nftRecord.status === "Listed" || nftRecord.status === "Called") {
-    setTotalListedNFTs(callPoolStats, -1);
-  }
-  callPoolStats.save();
-
+  const status = nftRecord.status;
   nftRecord.status = "Removed";
   nftRecord.updateTimestamp = event.block.timestamp.toI32();
   nftRecord.save();
+
+  const callPoolStatsId = nftRecord.callPoolStat;
+  const callPoolStats = getCallPoolStats(callPoolStatsId);
+  setTotalDepositedNFTs(callPoolStats, -1);
+  if (status == "Listed" || status == "Called") {
+    setTotalListedNFTs(callPoolStats, -1);
+  }
+  callPoolStats.save();
 }
 
 export function handleWithdrawETH(event: WithdrawETHEvent): void {}
