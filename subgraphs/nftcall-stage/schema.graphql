@@ -1,0 +1,82 @@
+enum NFTStatus {
+  Deposited
+  Listed
+  Called
+  Removed
+}
+
+type NFT @entity {
+  id: ID!
+  nftAddress: Bytes!
+  tokenId: BigInt!
+
+  status: NFTStatus!
+  position: Position
+  updateTimestamp: Int!
+  positionEndTimestamp: Int
+
+  callPoolStat: CallPoolStat!
+  callPoolAddress: Bytes!
+  userAddress: Bytes!
+
+  strikePriceGapIdx: Int!
+  durationIdx: Int!
+  lowerLimitOfStrikePrice: BigInt!
+}
+
+enum PositionStatus {
+  Unexercised
+  Exercised
+}
+type Position @entity {
+  id: ID!
+  nftOwnerAddress: Bytes!
+  userAddress: Bytes!
+  nftAddress: Bytes!
+  tokenId: BigInt!
+
+  callPoolAddress: Bytes!
+  exerciseTime: Int!
+  endTime: Int!
+  floorPrice: BigInt!
+  strikePrice: BigInt!
+  premiumToOwner: BigInt!
+  premiumToReserve: BigInt!
+
+  status: PositionStatus!
+  updateTimestamp: Int!
+  createTimestamp: Int!
+}
+
+type NFTTransaction @entity(immutable: true) {
+  id: Bytes!
+  userAddress: Bytes!
+  nftAddress: Bytes!
+  tokenId: BigInt!
+  soldPrice: BigInt!
+  createTimestamp: Int!
+  transactionHash: Bytes!
+}
+
+type UserStat @entity {
+  id: ID! #userAddress
+  accumulativeEarnings: BigInt!
+  userCallPoolStat: [UserCallPoolStat!]!
+}
+
+type UserCallPoolStat @entity {
+  id: ID! #userAddress + callPoolAddress
+  userAddress: Bytes!
+  callPoolAddress: Bytes!
+
+  accruedEarnings: BigInt!
+}
+
+type CallPoolStat @entity {
+  id: ID! #callPoolAddress
+  accumulativePremium: BigInt!
+  totalTradingVolume: BigInt!
+  totalDepositedNFTs: Int!
+  totalListedNFTs: Int!
+  nfts: [NFT!]! @derivedFrom(field: "callPoolStat")
+}
