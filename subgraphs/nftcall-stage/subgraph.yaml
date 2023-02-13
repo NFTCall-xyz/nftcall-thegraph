@@ -14,12 +14,20 @@ dataSources:
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
+        - Activate
+        - BalanceChangedETH
         - CallClosed
         - CallOpened
+        - CollectProtocol
+        - Deactivate
         - Deposit
+        - DepositETH
         - OffMarket
         - OnMarket
+        - Paused
+        - PreferenceUpdated
         - PremiumReceived
+        - Unpaused
         - Withdraw
         - WithdrawETH
       abis:
@@ -30,24 +38,38 @@ dataSources:
         - name: NFTOracle
           file: ./abis/NFTOracle.json
       eventHandlers:
+        - event: Activate(address)
+          handler: handleActivate
+        - event: BalanceChangedETH(indexed address,uint256)
+          handler: handleBalanceChangedETH
         - event: CallClosed(indexed address,indexed address,address,indexed uint256,uint256)
           handler: handleCallClosed
-        - event: CallOpened(indexed address,indexed address,indexed uint256,uint256,uint256)
+        - event: CallOpened(indexed address,indexed address,indexed uint256,uint8,uint8,uint256,uint40,uint40)
           handler: handleCallOpened
+        - event: CollectProtocol(indexed address,indexed address,uint256)
+          handler: handleCollectProtocol
+        - event: Deactivate(address)
+          handler: handleDeactivate
         - event: Deposit(indexed address,address,indexed address,indexed uint256)
           handler: handleDeposit
+        - event: DepositETH(indexed address,indexed address,uint256)
+          handler: handleDepositETH
         - event: OffMarket(indexed address,indexed address,indexed uint256)
           handler: handleOffMarket
         - event: OnMarket(indexed address,indexed address,indexed uint256)
           handler: handleOnMarket
+        - event: Paused(address)
+          handler: handlePaused
+        - event: PreferenceUpdated(indexed address,indexed uint256,uint8,uint8,uint256)
+          handler: handlePreferenceUpdated
         - event: PremiumReceived(indexed address,indexed address,indexed uint256,uint256,uint256)
           handler: handlePremiumReceived
+        - event: Unpaused(address)
+          handler: handleUnpaused
         - event: Withdraw(indexed address,indexed address,address,indexed uint256)
           handler: handleWithdraw
         - event: WithdrawETH(indexed address,indexed address,uint256)
           handler: handleWithdrawETH
-        - event: PreferenceUpdated(indexed address,indexed uint256,uint8,uint8,uint256)
-          handler: handlePreferenceUpdated
       file: ./src/call-pool.ts
 
   - kind: ethereum
@@ -62,12 +84,20 @@ dataSources:
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
+        - Activate
+        - BalanceChangedETH
         - CallClosed
         - CallOpened
+        - CollectProtocol
+        - Deactivate
         - Deposit
+        - DepositETH
         - OffMarket
         - OnMarket
+        - Paused
+        - PreferenceUpdated
         - PremiumReceived
+        - Unpaused
         - Withdraw
         - WithdrawETH
       abis:
@@ -78,22 +108,36 @@ dataSources:
         - name: NFTOracle
           file: ./abis/NFTOracle.json
       eventHandlers:
+        - event: Activate(address)
+          handler: handleActivate
+        - event: BalanceChangedETH(indexed address,uint256)
+          handler: handleBalanceChangedETH
         - event: CallClosed(indexed address,indexed address,address,indexed uint256,uint256)
           handler: handleCallClosed
-        - event: CallOpened(indexed address,indexed address,indexed uint256,uint256,uint256)
+        - event: CallOpened(indexed address,indexed address,indexed uint256,uint8,uint8,uint256,uint40,uint40)
           handler: handleCallOpened
+        - event: CollectProtocol(indexed address,indexed address,uint256)
+          handler: handleCollectProtocol
+        - event: Deactivate(address)
+          handler: handleDeactivate
         - event: Deposit(indexed address,address,indexed address,indexed uint256)
           handler: handleDeposit
+        - event: DepositETH(indexed address,indexed address,uint256)
+          handler: handleDepositETH
         - event: OffMarket(indexed address,indexed address,indexed uint256)
           handler: handleOffMarket
         - event: OnMarket(indexed address,indexed address,indexed uint256)
           handler: handleOnMarket
+        - event: Paused(address)
+          handler: handlePaused
+        - event: PreferenceUpdated(indexed address,indexed uint256,uint8,uint8,uint256)
+          handler: handlePreferenceUpdated
         - event: PremiumReceived(indexed address,indexed address,indexed uint256,uint256,uint256)
           handler: handlePremiumReceived
+        - event: Unpaused(address)
+          handler: handleUnpaused
         - event: Withdraw(indexed address,indexed address,address,indexed uint256)
           handler: handleWithdraw
         - event: WithdrawETH(indexed address,indexed address,uint256)
           handler: handleWithdrawETH
-        - event: PreferenceUpdated(indexed address,indexed uint256,uint8,uint8,uint256)
-          handler: handlePreferenceUpdated
       file: ./src/call-pool.ts

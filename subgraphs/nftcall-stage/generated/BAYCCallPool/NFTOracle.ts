@@ -72,6 +72,28 @@ export class Paused__Params {
   }
 }
 
+export class ReplaceAsset extends ethereum.Event {
+  get params(): ReplaceAsset__Params {
+    return new ReplaceAsset__Params(this);
+  }
+}
+
+export class ReplaceAsset__Params {
+  _event: ReplaceAsset;
+
+  constructor(event: ReplaceAsset) {
+    this._event = event;
+  }
+
+  get oldAsset(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newAsset(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class SetAssetData extends ethereum.Event {
   get params(): SetAssetData__Params {
     return new SetAssetData__Params(this);
@@ -585,6 +607,40 @@ export class RenounceOwnershipCall__Outputs {
   _call: RenounceOwnershipCall;
 
   constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class ReplaceAssetCall extends ethereum.Call {
+  get inputs(): ReplaceAssetCall__Inputs {
+    return new ReplaceAssetCall__Inputs(this);
+  }
+
+  get outputs(): ReplaceAssetCall__Outputs {
+    return new ReplaceAssetCall__Outputs(this);
+  }
+}
+
+export class ReplaceAssetCall__Inputs {
+  _call: ReplaceAssetCall;
+
+  constructor(call: ReplaceAssetCall) {
+    this._call = call;
+  }
+
+  get oldAsset(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get newAsset(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+}
+
+export class ReplaceAssetCall__Outputs {
+  _call: ReplaceAssetCall;
+
+  constructor(call: ReplaceAssetCall) {
     this._call = call;
   }
 }

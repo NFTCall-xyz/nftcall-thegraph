@@ -10,6 +10,24 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
+export class Activate extends ethereum.Event {
+  get params(): Activate__Params {
+    return new Activate__Params(this);
+  }
+}
+
+export class Activate__Params {
+  _event: Activate;
+
+  constructor(event: Activate) {
+    this._event = event;
+  }
+
+  get account(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
 export class BalanceChangedETH extends ethereum.Event {
   get params(): BalanceChangedETH__Params {
     return new BalanceChangedETH__Params(this);
@@ -91,12 +109,24 @@ export class CallOpened__Params {
     return this._event.parameters[2].value.toBigInt();
   }
 
-  get strikePriceGap(): BigInt {
-    return this._event.parameters[3].value.toBigInt();
+  get strikePriceGapIdx(): i32 {
+    return this._event.parameters[3].value.toI32();
   }
 
-  get duration(): BigInt {
-    return this._event.parameters[4].value.toBigInt();
+  get durationIdx(): i32 {
+    return this._event.parameters[4].value.toI32();
+  }
+
+  get exercisePrice(): BigInt {
+    return this._event.parameters[5].value.toBigInt();
+  }
+
+  get exercisePeriodBegin(): BigInt {
+    return this._event.parameters[6].value.toBigInt();
+  }
+
+  get exercisePeriodEnd(): BigInt {
+    return this._event.parameters[7].value.toBigInt();
   }
 }
 
@@ -123,6 +153,24 @@ export class CollectProtocol__Params {
 
   get amount(): BigInt {
     return this._event.parameters[2].value.toBigInt();
+  }
+}
+
+export class Deactivate extends ethereum.Event {
+  get params(): Deactivate__Params {
+    return new Deactivate__Params(this);
+  }
+}
+
+export class Deactivate__Params {
+  _event: Deactivate;
+
+  constructor(event: Deactivate) {
+    this._event = event;
+  }
+
+  get account(): Address {
+    return this._event.parameters[0].value.toAddress();
   }
 }
 
@@ -281,7 +329,7 @@ export class PreferenceUpdated__Params {
     return this._event.parameters[3].value.toI32();
   }
 
-  get lowerLimitOfStrikePrice(): BigInt {
+  get minimumStrikePrice(): BigInt {
     return this._event.parameters[4].value.toBigInt();
   }
 }
@@ -394,61 +442,33 @@ export class WithdrawETH__Params {
   }
 }
 
-export class CallPool__getNFTStatusResult {
-  value0: boolean;
-  value1: boolean;
-  value2: i32;
-  value3: i32;
-  value4: BigInt;
-
-  constructor(
-    value0: boolean,
-    value1: boolean,
-    value2: i32,
-    value3: i32,
-    value4: BigInt
-  ) {
-    this.value0 = value0;
-    this.value1 = value1;
-    this.value2 = value2;
-    this.value3 = value3;
-    this.value4 = value4;
+export class CallPool__getNFTStatusResultValue0Struct extends ethereum.Tuple {
+  get ifOnMarket(): boolean {
+    return this[0].toBoolean();
   }
 
-  toMap(): TypedMap<string, ethereum.Value> {
-    let map = new TypedMap<string, ethereum.Value>();
-    map.set("value0", ethereum.Value.fromBoolean(this.value0));
-    map.set("value1", ethereum.Value.fromBoolean(this.value1));
-    map.set(
-      "value2",
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value2))
-    );
-    map.set(
-      "value3",
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value3))
-    );
-    map.set("value4", ethereum.Value.fromUnsignedBigInt(this.value4));
-    return map;
+  get minimumStrikeGapIdx(): i32 {
+    return this[1].toI32();
   }
 
-  getValue0(): boolean {
-    return this.value0;
+  get maximumDurationIdx(): i32 {
+    return this[2].toI32();
   }
 
-  getValue1(): boolean {
-    return this.value1;
+  get exerciseTime(): BigInt {
+    return this[3].toBigInt();
   }
 
-  getValue2(): i32 {
-    return this.value2;
+  get endTime(): BigInt {
+    return this[4].toBigInt();
   }
 
-  getValue3(): i32 {
-    return this.value3;
+  get minimumStrikePrice(): BigInt {
+    return this[5].toBigInt();
   }
 
-  getValue4(): BigInt {
-    return this.value4;
+  get strikePrice(): BigInt {
+    return this[6].toBigInt();
   }
 }
 
@@ -491,9 +511,87 @@ export class CallPool__previewOpenCallResult {
   }
 }
 
+export class CallPool__previewOpenCallBatchResult {
+  value0: Array<BigInt>;
+  value1: Array<BigInt>;
+  value2: Array<BigInt>;
+  value3: Array<BigInt>;
+
+  constructor(
+    value0: Array<BigInt>,
+    value1: Array<BigInt>,
+    value2: Array<BigInt>,
+    value3: Array<BigInt>
+  ) {
+    this.value0 = value0;
+    this.value1 = value1;
+    this.value2 = value2;
+    this.value3 = value3;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromUnsignedBigIntArray(this.value0));
+    map.set("value1", ethereum.Value.fromUnsignedBigIntArray(this.value1));
+    map.set("value2", ethereum.Value.fromUnsignedBigIntArray(this.value2));
+    map.set("value3", ethereum.Value.fromUnsignedBigIntArray(this.value3));
+    return map;
+  }
+
+  getStrikePrices(): Array<BigInt> {
+    return this.value0;
+  }
+
+  getPremiumsToOwner(): Array<BigInt> {
+    return this.value1;
+  }
+
+  getPremiumsToReserve(): Array<BigInt> {
+    return this.value2;
+  }
+
+  getErrorCodes(): Array<BigInt> {
+    return this.value3;
+  }
+}
+
 export class CallPool extends ethereum.SmartContract {
   static bind(address: Address): CallPool {
     return new CallPool("CallPool", address);
+  }
+
+  DECIMALS(): BigInt {
+    let result = super.call("DECIMALS", "DECIMALS():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_DECIMALS(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("DECIMALS", "DECIMALS():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  DURATION(durationIdx: i32): BigInt {
+    let result = super.call("DURATION", "DURATION(uint8):(uint40)", [
+      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(durationIdx))
+    ]);
+
+    return result[0].toBigInt();
+  }
+
+  try_DURATION(durationIdx: i32): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("DURATION", "DURATION(uint8):(uint40)", [
+      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(durationIdx))
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   INVALID_PRICE(): BigInt {
@@ -507,6 +605,52 @@ export class CallPool extends ethereum.SmartContract {
       "INVALID_PRICE",
       "INVALID_PRICE():(uint256)",
       []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  MAXIMUM_STRIKE_PRICE(): BigInt {
+    let result = super.call(
+      "MAXIMUM_STRIKE_PRICE",
+      "MAXIMUM_STRIKE_PRICE():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_MAXIMUM_STRIKE_PRICE(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "MAXIMUM_STRIKE_PRICE",
+      "MAXIMUM_STRIKE_PRICE():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  STRIKE_PRICE_GAP(strikePriceGapIdx: i32): BigInt {
+    let result = super.call(
+      "STRIKE_PRICE_GAP",
+      "STRIKE_PRICE_GAP(uint8):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(strikePriceGapIdx))]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_STRIKE_PRICE_GAP(strikePriceGapIdx: i32): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "STRIKE_PRICE_GAP",
+      "STRIKE_PRICE_GAP(uint8):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(strikePriceGapIdx))]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -642,28 +786,43 @@ export class CallPool extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  getNFTStatus(tokenId: BigInt): CallPool__getNFTStatusResult {
+  getEndTime(tokenId: BigInt): BigInt {
+    let result = super.call("getEndTime", "getEndTime(uint256):(uint256)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId)
+    ]);
+
+    return result[0].toBigInt();
+  }
+
+  try_getEndTime(tokenId: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("getEndTime", "getEndTime(uint256):(uint256)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getNFTStatus(tokenId: BigInt): CallPool__getNFTStatusResultValue0Struct {
     let result = super.call(
       "getNFTStatus",
-      "getNFTStatus(uint256):(bool,bool,uint8,uint8,uint256)",
+      "getNFTStatus(uint256):((bool,uint8,uint8,uint256,uint256,uint256,uint256))",
       [ethereum.Value.fromUnsignedBigInt(tokenId)]
     );
 
-    return new CallPool__getNFTStatusResult(
-      result[0].toBoolean(),
-      result[1].toBoolean(),
-      result[2].toI32(),
-      result[3].toI32(),
-      result[4].toBigInt()
+    return changetype<CallPool__getNFTStatusResultValue0Struct>(
+      result[0].toTuple()
     );
   }
 
   try_getNFTStatus(
     tokenId: BigInt
-  ): ethereum.CallResult<CallPool__getNFTStatusResult> {
+  ): ethereum.CallResult<CallPool__getNFTStatusResultValue0Struct> {
     let result = super.tryCall(
       "getNFTStatus",
-      "getNFTStatus(uint256):(bool,bool,uint8,uint8,uint256)",
+      "getNFTStatus(uint256):((bool,uint8,uint8,uint256,uint256,uint256,uint256))",
       [ethereum.Value.fromUnsignedBigInt(tokenId)]
     );
     if (result.reverted) {
@@ -671,13 +830,7 @@ export class CallPool extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new CallPool__getNFTStatusResult(
-        value[0].toBoolean(),
-        value[1].toBoolean(),
-        value[2].toI32(),
-        value[3].toI32(),
-        value[4].toBigInt()
-      )
+      changetype<CallPool__getNFTStatusResultValue0Struct>(value[0].toTuple())
     );
   }
 
@@ -781,16 +934,16 @@ export class CallPool extends ethereum.SmartContract {
 
   previewOpenCall(
     tokenId: BigInt,
-    strikePriceGapIdx: BigInt,
-    durationIdx: BigInt
+    strikePriceGapIdx: i32,
+    durationIdx: i32
   ): CallPool__previewOpenCallResult {
     let result = super.call(
       "previewOpenCall",
-      "previewOpenCall(uint256,uint256,uint256):(uint256,uint256,uint256,uint256)",
+      "previewOpenCall(uint256,uint8,uint8):(uint256,uint256,uint256,uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(tokenId),
-        ethereum.Value.fromUnsignedBigInt(strikePriceGapIdx),
-        ethereum.Value.fromUnsignedBigInt(durationIdx)
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(strikePriceGapIdx)),
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(durationIdx))
       ]
     );
 
@@ -804,16 +957,16 @@ export class CallPool extends ethereum.SmartContract {
 
   try_previewOpenCall(
     tokenId: BigInt,
-    strikePriceGapIdx: BigInt,
-    durationIdx: BigInt
+    strikePriceGapIdx: i32,
+    durationIdx: i32
   ): ethereum.CallResult<CallPool__previewOpenCallResult> {
     let result = super.tryCall(
       "previewOpenCall",
-      "previewOpenCall(uint256,uint256,uint256):(uint256,uint256,uint256,uint256)",
+      "previewOpenCall(uint256,uint8,uint8):(uint256,uint256,uint256,uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(tokenId),
-        ethereum.Value.fromUnsignedBigInt(strikePriceGapIdx),
-        ethereum.Value.fromUnsignedBigInt(durationIdx)
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(strikePriceGapIdx)),
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(durationIdx))
       ]
     );
     if (result.reverted) {
@@ -826,6 +979,57 @@ export class CallPool extends ethereum.SmartContract {
         value[1].toBigInt(),
         value[2].toBigInt(),
         value[3].toBigInt()
+      )
+    );
+  }
+
+  previewOpenCallBatch(
+    tokenIds: Array<BigInt>,
+    strikePriceGaps: Array<i32>,
+    durations: Array<i32>
+  ): CallPool__previewOpenCallBatchResult {
+    let result = super.call(
+      "previewOpenCallBatch",
+      "previewOpenCallBatch(uint256[],uint8[],uint8[]):(uint256[],uint256[],uint256[],uint256[])",
+      [
+        ethereum.Value.fromUnsignedBigIntArray(tokenIds),
+        ethereum.Value.fromI32Array(strikePriceGaps),
+        ethereum.Value.fromI32Array(durations)
+      ]
+    );
+
+    return new CallPool__previewOpenCallBatchResult(
+      result[0].toBigIntArray(),
+      result[1].toBigIntArray(),
+      result[2].toBigIntArray(),
+      result[3].toBigIntArray()
+    );
+  }
+
+  try_previewOpenCallBatch(
+    tokenIds: Array<BigInt>,
+    strikePriceGaps: Array<i32>,
+    durations: Array<i32>
+  ): ethereum.CallResult<CallPool__previewOpenCallBatchResult> {
+    let result = super.tryCall(
+      "previewOpenCallBatch",
+      "previewOpenCallBatch(uint256[],uint8[],uint8[]):(uint256[],uint256[],uint256[],uint256[])",
+      [
+        ethereum.Value.fromUnsignedBigIntArray(tokenIds),
+        ethereum.Value.fromI32Array(strikePriceGaps),
+        ethereum.Value.fromI32Array(durations)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      new CallPool__previewOpenCallBatchResult(
+        value[0].toBigIntArray(),
+        value[1].toBigIntArray(),
+        value[2].toBigIntArray(),
+        value[3].toBigIntArray()
       )
     );
   }
@@ -909,6 +1113,32 @@ export class ConstructorCall__Outputs {
   }
 }
 
+export class ActivateCall extends ethereum.Call {
+  get inputs(): ActivateCall__Inputs {
+    return new ActivateCall__Inputs(this);
+  }
+
+  get outputs(): ActivateCall__Outputs {
+    return new ActivateCall__Outputs(this);
+  }
+}
+
+export class ActivateCall__Inputs {
+  _call: ActivateCall;
+
+  constructor(call: ActivateCall) {
+    this._call = call;
+  }
+}
+
+export class ActivateCall__Outputs {
+  _call: ActivateCall;
+
+  constructor(call: ActivateCall) {
+    this._call = call;
+  }
+}
+
 export class ChangePreferenceCall extends ethereum.Call {
   get inputs(): ChangePreferenceCall__Inputs {
     return new ChangePreferenceCall__Inputs(this);
@@ -938,7 +1168,7 @@ export class ChangePreferenceCall__Inputs {
     return this._call.inputValues[2].value.toI32();
   }
 
-  get lowerLimitOfStrikePrice(): BigInt {
+  get minimumStrikePrice(): BigInt {
     return this._call.inputValues[3].value.toBigInt();
   }
 }
@@ -986,6 +1216,32 @@ export class CollectProtocolCall__Outputs {
 
   get amountSent(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
+  }
+}
+
+export class DeactivateCall extends ethereum.Call {
+  get inputs(): DeactivateCall__Inputs {
+    return new DeactivateCall__Inputs(this);
+  }
+
+  get outputs(): DeactivateCall__Outputs {
+    return new DeactivateCall__Outputs(this);
+  }
+}
+
+export class DeactivateCall__Inputs {
+  _call: DeactivateCall;
+
+  constructor(call: DeactivateCall) {
+    this._call = call;
+  }
+}
+
+export class DeactivateCall__Outputs {
+  _call: DeactivateCall;
+
+  constructor(call: DeactivateCall) {
+    this._call = call;
   }
 }
 
@@ -1056,7 +1312,7 @@ export class DepositWithPreferenceCall__Inputs {
     return this._call.inputValues[3].value.toI32();
   }
 
-  get lowerLimitOfStrikePrice(): BigInt {
+  get minimumStrikePrice(): BigInt {
     return this._call.inputValues[4].value.toBigInt();
   }
 }
@@ -1120,12 +1376,12 @@ export class OpenCallCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get strikePriceGapIdx(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
+  get strikePriceGapIdx(): i32 {
+    return this._call.inputValues[1].value.toI32();
   }
 
-  get durationIdx(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
+  get durationIdx(): i32 {
+    return this._call.inputValues[2].value.toI32();
   }
 }
 
@@ -1158,12 +1414,12 @@ export class OpenCallBatchCall__Inputs {
     return this._call.inputValues[0].value.toBigIntArray();
   }
 
-  get strikePriceGaps(): Array<BigInt> {
-    return this._call.inputValues[1].value.toBigIntArray();
+  get strikePriceGaps(): Array<i32> {
+    return this._call.inputValues[1].value.toI32Array();
   }
 
-  get durations(): Array<BigInt> {
-    return this._call.inputValues[2].value.toBigIntArray();
+  get durations(): Array<i32> {
+    return this._call.inputValues[2].value.toI32Array();
   }
 }
 

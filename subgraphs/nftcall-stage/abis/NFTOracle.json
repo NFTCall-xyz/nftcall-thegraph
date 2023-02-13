@@ -54,6 +54,25 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "oldAsset",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newAsset",
+        "type": "address"
+      }
+    ],
+    "name": "ReplaceAsset",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "uint256[]",
         "name": "indexes",
@@ -381,6 +400,24 @@
   {
     "inputs": [],
     "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "oldAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "newAsset",
+        "type": "address"
+      }
+    ],
+    "name": "replaceAsset",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
