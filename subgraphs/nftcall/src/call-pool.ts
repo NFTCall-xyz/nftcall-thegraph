@@ -200,9 +200,9 @@ export function handlePremiumReceived(event: PremiumReceivedEvent): void {
   positionRecord.save();
   const callPoolStatsId = nftRecord.callPoolStat;
   const callPoolStats = getCallPoolStats(callPoolStatsId);
-  callPoolStats.accumulativePremium = callPoolStats.accumulativePremium.plus(
-    positionRecord.premiumToReserve
-  );
+  callPoolStats.accumulativePremium = callPoolStats.accumulativePremium
+    .plus(positionRecord.premiumToReserve)
+    .plus(positionRecord.premiumToOwner);
   callPoolStats.save();
 
   addUserAccruedEarnings(
