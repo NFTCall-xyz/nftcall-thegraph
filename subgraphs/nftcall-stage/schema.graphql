@@ -21,7 +21,7 @@ type NFT @entity {
 
   strikePriceGapIdx: Int!
   durationIdx: Int!
-  lowerLimitOfStrikePrice: BigInt!
+  minimumStrikePrice: BigInt!
 }
 
 enum PositionStatus {

@@ -1,5 +1,7 @@
 import { BigInt } from "@graphprotocol/graph-ts";
 import {
+  BalanceChangedETH as BalanceChangedETHEvent,
+  Activate as ActivateEvent,
   CallClosed as CallClosedEvent,
   CallOpened as CallOpenedEvent,
   Deposit as DepositEvent,
@@ -9,9 +11,13 @@ import {
   Withdraw as WithdrawEvent,
   WithdrawETH as WithdrawETHEvent,
   PreferenceUpdated as PreferenceUpdatedEvent,
+  CollectProtocol as CollectProtocolEvent,
+  Deactivate as DeactivateEvent,
+  DepositETH as DepositETHEvent,
+  Paused as PausedEvent,
+  Unpaused as UnpausedEvent,
   CallPool,
 } from "../generated/BAYCCallPool/CallPool";
-import { CallToken } from "../generated/BAYCCallPool/CallToken";
 import { NFTOracle } from "../generated/BAYCCallPool/NFTOracle";
 import { NFT, Position, NFTTransaction } from "../generated/schema";
 import { getNFTId } from "./adapter/nft";
@@ -84,10 +90,8 @@ export function handleCallOpened(event: CallOpenedEvent): void {
   positionRecord.callPoolAddress = event.address;
   positionRecord.nftOwnerAddress = nftRecord.userAddress;
   const callPoolContract = CallPool.bind(event.address);
-  const callTokenAddress = callPoolContract.callToken();
-  const callTokenContract = CallToken.bind(callTokenAddress);
 
-  const callInfo = callTokenContract.getCallInfo(event.params.tokenId);
+  const callInfo = callPoolContract.getNFTStatus(event.params.tokenId);
   positionRecord.exerciseTime = callInfo.exerciseTime.toI32();
   positionRecord.endTime = callInfo.endTime.toI32();
   positionRecord.strikePrice = callInfo.strikePrice;
@@ -134,14 +138,14 @@ export function handleDeposit(event: DepositEvent): void {
       bool available;             // If it is available for opening a position. Only when callId=0 or the option with callId has expired
       uint8 lowerStrikePriceGapIdx;   // value 0-5. If 1, means the strike price gap must be >= 10%. Default 1.
       uint8 upperDurationIdx;         // value 0-3. If 3, means the duration preference is <= 28d. Default is 3.
-      uint256 lowerLimitOfStrikePrice;
+      uint256 minimumStrikePrice;
     }
    */
   const NFTStatus = callPoolContract.getNFTStatus(nftRecord.tokenId);
 
-  nftRecord.strikePriceGapIdx = NFTStatus.value2;
-  nftRecord.durationIdx = NFTStatus.value3;
-  nftRecord.lowerLimitOfStrikePrice = NFTStatus.value4;
+  nftRecord.strikePriceGapIdx = NFTStatus.minimumStrikeGapIdx;
+  nftRecord.durationIdx = NFTStatus.maximumDurationIdx;
+  nftRecord.minimumStrikePrice = NFTStatus.minimumStrikePrice;
 
   nftRecord.userAddress = event.params.onBehalfOf;
   nftRecord.callPoolAddress = event.address;
@@ -238,7 +242,19 @@ export function handlePreferenceUpdated(event: PreferenceUpdatedEvent): void {
   if (!nftRecord) return;
   nftRecord.strikePriceGapIdx = event.params.lowerStrikePriceGapIdx;
   nftRecord.durationIdx = event.params.upperDurationIdx;
-  nftRecord.lowerLimitOfStrikePrice = event.params.lowerLimitOfStrikePrice;
+  nftRecord.minimumStrikePrice = event.params.minimumStrikePrice;
   nftRecord.updateTimestamp = event.block.timestamp.toI32();
   nftRecord.save();
 }
+
+export function handleBalanceChangedETH(event: BalanceChangedETHEvent): void {}
+
+export function handleCollectProtocol(event: CollectProtocolEvent): void {}
+
+export function handleActivate(event: ActivateEvent): void {}
+export function handleDeactivate(event: DeactivateEvent): void {}
+
+export function handleDepositETH(event: DepositETHEvent): void {}
+
+export function handlePaused(event: PausedEvent): void {}
+export function handleUnpaused(event: UnpausedEvent): void {}
