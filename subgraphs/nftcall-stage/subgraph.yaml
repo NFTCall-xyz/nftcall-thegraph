@@ -6,7 +6,7 @@ dataSources:
     name: BAYCCallPool
     network: goerli
     source:
-      address: "0xA45eC1cb453165C6a600418f28faeA733371Bc51"
+      address: "0x53CA3d8b8028a42ecd1c752F59c794570397DC62"
       abi: CallPool
       startBlock: 8477156
     mapping:
@@ -74,7 +74,7 @@ dataSources:
     name: MAYCCallPool
     network: goerli
     source:
-      address: "0xC919080c66fAdCFee7a0886eEAe25F4906e19e91"
+      address: "0x47983474B238746488578e2dB514f04330A59C3c"
       abi: CallPool
       startBlock: 8477156
     mapping:
