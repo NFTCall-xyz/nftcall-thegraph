@@ -453,6 +453,24 @@ export class UserStat extends Entity {
   set userCallPoolStat(value: Array<string>) {
     this.set("userCallPoolStat", Value.fromStringArray(value));
   }
+
+  get sellerYield(): BigDecimal {
+    let value = this.get("sellerYield");
+    return value!.toBigDecimal();
+  }
+
+  set sellerYield(value: BigDecimal) {
+    this.set("sellerYield", Value.fromBigDecimal(value));
+  }
+
+  get totalDuration(): BigInt {
+    let value = this.get("totalDuration");
+    return value!.toBigInt();
+  }
+
+  set totalDuration(value: BigInt) {
+    this.set("totalDuration", Value.fromBigInt(value));
+  }
 }
 
 export class UserCallPoolStat extends Entity {

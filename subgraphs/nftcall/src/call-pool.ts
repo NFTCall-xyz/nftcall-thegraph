@@ -20,7 +20,11 @@ import {
   setTotalDepositedNFTs,
   setTotalListedNFTs,
 } from "./adapter/stat";
-import { addUserAccruedEarnings } from "./adapter/userStat";
+import {
+  addUserAccruedEarnings,
+  addUserSellerAPY,
+  decreaseUserSellerTotalDuration,
+} from "./adapter/userStat";
 
 export function handleCallClosed(event: CallClosedEvent): void {
   const nftId = getNFTId(event.params.nft, event.params.tokenId);
@@ -67,6 +71,12 @@ export function handleCallClosed(event: CallClosedEvent): void {
     positionRecord.nftOwnerAddress,
     event.address,
     event.params.price
+  );
+
+  decreaseUserSellerTotalDuration(
+    positionRecord.nftOwnerAddress,
+    event.address,
+    BigInt.fromI32(positionRecord.endTime - event.block.timestamp.toI32())
   );
 }
 
@@ -200,15 +210,31 @@ export function handlePremiumReceived(event: PremiumReceivedEvent): void {
   positionRecord.save();
   const callPoolStatsId = nftRecord.callPoolStat;
   const callPoolStats = getCallPoolStats(callPoolStatsId);
-  callPoolStats.accumulativePremium = callPoolStats.accumulativePremium
-    .plus(positionRecord.premiumToReserve)
-    .plus(positionRecord.premiumToOwner);
+
+  const premium = event.params.premiumToReserve.plus(
+    event.params.premiumToOwner
+  );
+  callPoolStats.accumulativePremium = callPoolStats.accumulativePremium.plus(
+    premium
+  );
   callPoolStats.save();
 
   addUserAccruedEarnings(
     positionRecord.nftOwnerAddress,
     event.address,
     event.params.premiumToOwner
+  );
+
+  const callPoolContract = CallPool.bind(event.address);
+  const nftOracleAddress = callPoolContract.oracle();
+  const nftOracleContract = NFTOracle.bind(nftOracleAddress);
+  const floorPrice = nftOracleContract.getAssetPrice(event.params.nft);
+  addUserSellerAPY(
+    positionRecord.nftOwnerAddress,
+    event.address,
+    premium,
+    floorPrice,
+    BigInt.fromI32(positionRecord.endTime - event.block.timestamp.toI32())
   );
 }
 
