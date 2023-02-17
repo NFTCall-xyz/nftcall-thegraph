@@ -1,4 +1,10 @@
-import { BigInt, ByteArray, Bytes, crypto } from "@graphprotocol/graph-ts";
+import {
+  BigDecimal,
+  BigInt,
+  ByteArray,
+  Bytes,
+  crypto,
+} from "@graphprotocol/graph-ts";
 import { UserStat, UserCallPoolStat } from "../../generated/schema";
 
 function getUserCallPoolStatId(
@@ -32,6 +38,44 @@ function userStatPushUserCallPoolStatId(userStat: UserStat, id: string): void {
 //   userStat.userCallPoolStat = array;
 // }
 
+function getUserStatRecord(
+  userStatsId: string,
+  userCallPoolStatId: string
+): UserStat {
+  let userStatsRecord = UserStat.load(userStatsId);
+  if (!userStatsRecord) {
+    userStatsRecord = new UserStat(userStatsId);
+    userStatsRecord.accumulativeEarnings = BigInt.fromI32(0);
+    userStatsRecord.sellerYield = BigDecimal.zero();
+    userStatsRecord.totalDuration = BigInt.fromI32(0);
+    userStatsRecord.userCallPoolStat = new Array(0);
+    userStatPushUserCallPoolStatId(userStatsRecord, userCallPoolStatId);
+  } else {
+    if (
+      userStatHasUserCallPoolStatId(userStatsRecord, userCallPoolStatId) === -1
+    ) {
+      userStatPushUserCallPoolStatId(userStatsRecord, userCallPoolStatId);
+    }
+  }
+
+  return userStatsRecord;
+}
+
+function getUserCallPoolStatRecord(
+  userCallPoolStatId: string,
+  userAddress: Bytes,
+  callPoolAddress: Bytes
+): UserCallPoolStat {
+  let userCallPoolStatRecord = UserCallPoolStat.load(userCallPoolStatId);
+  if (!userCallPoolStatRecord) {
+    userCallPoolStatRecord = new UserCallPoolStat(userCallPoolStatId);
+    userCallPoolStatRecord.userAddress = userAddress;
+    userCallPoolStatRecord.callPoolAddress = callPoolAddress;
+    userCallPoolStatRecord.accruedEarnings = BigInt.fromI32(0);
+  }
+
+  return userCallPoolStatRecord;
+}
 export function addUserAccruedEarnings(
   userAddress: Bytes,
   callPoolAddress: Bytes,
@@ -71,5 +115,44 @@ export function addUserAccruedEarnings(
   userStatsRecord.accumulativeEarnings = userStatsRecord.accumulativeEarnings.plus(
     amount
   );
+  userStatsRecord.save();
+}
+
+export function addUserSellerAPY(
+  userAddress: Bytes,
+  callPoolAddress: Bytes,
+  premium: BigInt,
+  floorPrice: BigInt,
+  duration: BigInt
+): void {
+  const userCallPoolStatId = getUserCallPoolStatId(
+    userAddress,
+    callPoolAddress
+  );
+  const userStatsId = userAddress.toHexString();
+  const userStatsRecord = getUserStatRecord(userStatsId, userCallPoolStatId);
+
+  const premiumDecimal = BigDecimal.fromString(premium.toString());
+  const floorPriceDecimal = BigDecimal.fromString(floorPrice.toString());
+
+  userStatsRecord.sellerYield = userStatsRecord.sellerYield.plus(
+    premiumDecimal.div(floorPriceDecimal)
+  );
+  userStatsRecord.totalDuration = userStatsRecord.totalDuration.plus(duration);
+  userStatsRecord.save();
+}
+
+export function decreaseUserSellerTotalDuration(
+  userAddress: Bytes,
+  callPoolAddress: Bytes,
+  duration: BigInt
+): void {
+  const userCallPoolStatId = getUserCallPoolStatId(
+    userAddress,
+    callPoolAddress
+  );
+  const userStatsId = userAddress.toHexString();
+  const userStatsRecord = getUserStatRecord(userStatsId, userCallPoolStatId);
+  userStatsRecord.totalDuration = userStatsRecord.totalDuration.minus(duration);
   userStatsRecord.save();
 }

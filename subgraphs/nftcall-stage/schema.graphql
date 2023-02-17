@@ -62,6 +62,9 @@ type UserStat @entity {
   id: ID! #userAddress
   accumulativeEarnings: BigInt!
   userCallPoolStat: [UserCallPoolStat!]!
+
+  sellerYield: BigDecimal!
+  totalDuration: BigInt!
 }
 
 type UserCallPoolStat @entity {

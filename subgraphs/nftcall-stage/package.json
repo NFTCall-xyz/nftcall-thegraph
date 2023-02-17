@@ -5,11 +5,11 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ rockgold0911/nftcall-stage",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ gordon199404/nftcall-stage",
     "deploy:studio": "graph deploy --studio nftcall-goerli",
-    "create-local": "graph create --node http://localhost:8020/ rockgold0911/nftcall-stage",
-    "remove-local": "graph remove --node http://localhost:8020/ rockgold0911/nftcall-stage",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 rockgold0911/nftcall-stage",
+    "create-local": "graph create --node http://localhost:8020/ gordon199404/nftcall-stage",
+    "remove-local": "graph remove --node http://localhost:8020/ gordon199404/nftcall-stage",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 gordon199404/nftcall-stage",
     "test": "graph test"
   },
   "dependencies": {

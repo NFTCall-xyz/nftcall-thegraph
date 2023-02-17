@@ -26,7 +26,11 @@ import {
   setTotalDepositedNFTs,
   setTotalListedNFTs,
 } from "./adapter/stat";
-import { addUserAccruedEarnings } from "./adapter/userStat";
+import {
+  addUserAccruedEarnings,
+  addUserSellerAPY,
+  decreaseUserSellerTotalDuration,
+} from "./adapter/userStat";
 
 export function handleCallClosed(event: CallClosedEvent): void {
   const nftId = getNFTId(event.params.nft, event.params.tokenId);
@@ -132,15 +136,6 @@ export function handleDeposit(event: DepositEvent): void {
   }
 
   const callPoolContract = CallPool.bind(event.address);
-  /**
-   * struct NFTStatus {
-      bool ifOnMarket;            // If it can be listed on market, default TRUE. Only can be set up by NFT holder
-      bool available;             // If it is available for opening a position. Only when callId=0 or the option with callId has expired
-      uint8 lowerStrikePriceGapIdx;   // value 0-5. If 1, means the strike price gap must be >= 10%. Default 1.
-      uint8 upperDurationIdx;         // value 0-3. If 3, means the duration preference is <= 28d. Default is 3.
-      uint256 minimumStrikePrice;
-    }
-   */
   const NFTStatus = callPoolContract.getNFTStatus(nftRecord.tokenId);
 
   nftRecord.strikePriceGapIdx = NFTStatus.minimumStrikeGapIdx;
@@ -204,15 +199,31 @@ export function handlePremiumReceived(event: PremiumReceivedEvent): void {
   positionRecord.save();
   const callPoolStatsId = nftRecord.callPoolStat;
   const callPoolStats = getCallPoolStats(callPoolStatsId);
-  callPoolStats.accumulativePremium = callPoolStats.accumulativePremium
-    .plus(positionRecord.premiumToReserve)
-    .plus(positionRecord.premiumToOwner);
+
+  const premium = event.params.premiumToReserve.plus(
+    event.params.premiumToOwner
+  );
+  callPoolStats.accumulativePremium = callPoolStats.accumulativePremium.plus(
+    premium
+  );
   callPoolStats.save();
 
   addUserAccruedEarnings(
     positionRecord.nftOwnerAddress,
     event.address,
     event.params.premiumToOwner
+  );
+
+  const callPoolContract = CallPool.bind(event.address);
+  const nftOracleAddress = callPoolContract.oracle();
+  const nftOracleContract = NFTOracle.bind(nftOracleAddress);
+  const floorPrice = nftOracleContract.getAssetPrice(event.params.nft);
+  addUserSellerAPY(
+    positionRecord.nftOwnerAddress,
+    event.address,
+    premium,
+    floorPrice,
+    BigInt.fromI32(positionRecord.endTime - event.block.timestamp.toI32())
   );
 }
 
