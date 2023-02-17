@@ -85,13 +85,12 @@ export function addUserAccruedEarnings(
     userAddress,
     callPoolAddress
   );
-  let userCallPoolStatRecord = UserCallPoolStat.load(userCallPoolStatId);
-  if (!userCallPoolStatRecord) {
-    userCallPoolStatRecord = new UserCallPoolStat(userCallPoolStatId);
-    userCallPoolStatRecord.userAddress = userAddress;
-    userCallPoolStatRecord.callPoolAddress = callPoolAddress;
-    userCallPoolStatRecord.accruedEarnings = BigInt.fromI32(0);
-  }
+
+  const userCallPoolStatRecord = getUserCallPoolStatRecord(
+    userCallPoolStatId,
+    userAddress,
+    callPoolAddress
+  );
 
   userCallPoolStatRecord.accruedEarnings = userCallPoolStatRecord.accruedEarnings.plus(
     amount
@@ -99,19 +98,8 @@ export function addUserAccruedEarnings(
   userCallPoolStatRecord.save();
 
   const userStatsId = userAddress.toHexString();
-  let userStatsRecord = UserStat.load(userStatsId);
-  if (!userStatsRecord) {
-    userStatsRecord = new UserStat(userStatsId);
-    userStatsRecord.accumulativeEarnings = BigInt.fromI32(0);
-    userStatsRecord.userCallPoolStat = new Array(0);
-    userStatPushUserCallPoolStatId(userStatsRecord, userCallPoolStatId);
-  } else {
-    if (
-      userStatHasUserCallPoolStatId(userStatsRecord, userCallPoolStatId) === -1
-    ) {
-      userStatPushUserCallPoolStatId(userStatsRecord, userCallPoolStatId);
-    }
-  }
+  const userStatsRecord = getUserStatRecord(userStatsId, userCallPoolStatId);
+
   userStatsRecord.accumulativeEarnings = userStatsRecord.accumulativeEarnings.plus(
     amount
   );
