@@ -6,9 +6,9 @@ dataSources:
     name: BAYCCallPool
     network: goerli
     source:
-      address: "0x53CA3d8b8028a42ecd1c752F59c794570397DC62"
+      address: "0xB15D5F2cb7FE748AA39f86D72459122Ff7B4eB60"
       abi: CallPool
-      startBlock: 8477156
+      startBlock: 8576377
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -21,7 +21,6 @@ dataSources:
         - CollectProtocol
         - Deactivate
         - Deposit
-        - DepositETH
         - OffMarket
         - OnMarket
         - Paused
@@ -50,8 +49,6 @@ dataSources:
           handler: handleDeactivate
         - event: Deposit(indexed address,address,indexed address,indexed uint256)
           handler: handleDeposit
-        - event: DepositETH(indexed address,indexed address,uint256)
-          handler: handleDepositETH
         - event: OffMarket(indexed address,indexed address,indexed uint256)
           handler: handleOffMarket
         - event: OnMarket(indexed address,indexed address,indexed uint256)
@@ -74,9 +71,9 @@ dataSources:
     name: MAYCCallPool
     network: goerli
     source:
-      address: "0x47983474B238746488578e2dB514f04330A59C3c"
+      address: "0x9D4ec2DB311F303FE2E63318Fb39d0101A1FEf83"
       abi: CallPool
-      startBlock: 8477156
+      startBlock: 8576377
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -89,7 +86,6 @@ dataSources:
         - CollectProtocol
         - Deactivate
         - Deposit
-        - DepositETH
         - OffMarket
         - OnMarket
         - Paused
@@ -118,8 +114,6 @@ dataSources:
           handler: handleDeactivate
         - event: Deposit(indexed address,address,indexed address,indexed uint256)
           handler: handleDeposit
-        - event: DepositETH(indexed address,indexed address,uint256)
-          handler: handleDepositETH
         - event: OffMarket(indexed address,indexed address,indexed uint256)
           handler: handleOffMarket
         - event: OnMarket(indexed address,indexed address,indexed uint256)
