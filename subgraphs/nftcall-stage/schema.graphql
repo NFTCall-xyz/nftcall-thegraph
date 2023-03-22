@@ -81,5 +81,7 @@ type CallPoolStat @entity {
   totalTradingVolume: BigInt!
   totalDepositedNFTs: Int!
   totalListedNFTs: Int!
+  paused: Boolean!
+  deactivate: Boolean!
   nfts: [NFT!]! @derivedFrom(field: "callPoolStat")
 }
