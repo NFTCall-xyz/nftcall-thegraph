@@ -4,7 +4,7 @@ schema:
 dataSources:
   - kind: ethereum
     name: BeanzCallPool
-    network: goerli
+    network: mainnet
     source:
       address: "0x570A31EE6fB311bD1ae07674f99A36679ddDA1C9"
       abi: CallPool
@@ -72,7 +72,7 @@ dataSources:
 
   - kind: ethereum
     name: PotatozCallPool
-    network: goerli
+    network: mainnet
     source:
       address: "0xFEB94488C31c5002aBd5c98205B061Ca3003e806"
       abi: CallPool
@@ -140,7 +140,7 @@ dataSources:
 
   - kind: ethereum
     name: ValhallaCallPool
-    network: goerli
+    network: mainnet
     source:
       address: "0xd6314163989675CC71f16e4A6060c1C3b0829Ae4"
       abi: CallPool
@@ -208,7 +208,7 @@ dataSources:
 
   - kind: ethereum
     name: ChecksCallPool
-    network: goerli
+    network: mainnet
     source:
       address: "0xe67f5188d41855012dbe794683cDdc69b5911272"
       abi: CallPool
@@ -276,7 +276,7 @@ dataSources:
 
   - kind: ethereum
     name: OtherdeedCallPool
-    network: goerli
+    network: mainnet
     source:
       address: "0x6C2E49A9a997F118468926A7a1C6998e85Af81c1"
       abi: CallPool
