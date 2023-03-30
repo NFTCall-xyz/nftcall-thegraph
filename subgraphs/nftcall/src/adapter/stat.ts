@@ -29,6 +29,8 @@ export function getCallPoolStats(callPoolStatsId: string): CallPoolStat {
     callPoolStats.totalTradingVolume = BigInt.fromI32(0);
     callPoolStats.totalDepositedNFTs = 0;
     callPoolStats.totalListedNFTs = 0;
+    callPoolStats.paused = false;
+    callPoolStats.deactivate = false;
   }
   return callPoolStats;
 }

@@ -13,7 +13,6 @@ import {
   PreferenceUpdated as PreferenceUpdatedEvent,
   CollectProtocol as CollectProtocolEvent,
   Deactivate as DeactivateEvent,
-  DepositETH as DepositETHEvent,
   Paused as PausedEvent,
   Unpaused as UnpausedEvent,
   CallPool,
@@ -262,10 +261,28 @@ export function handleBalanceChangedETH(event: BalanceChangedETHEvent): void {}
 
 export function handleCollectProtocol(event: CollectProtocolEvent): void {}
 
-export function handleActivate(event: ActivateEvent): void {}
-export function handleDeactivate(event: DeactivateEvent): void {}
+export function handleActivate(event: ActivateEvent): void {
+  const callPoolStatsId = event.address.toHexString();
+  const callPoolStats = getCallPoolStats(callPoolStatsId);
+  callPoolStats.deactivate = false;
+  callPoolStats.save();
+}
+export function handleDeactivate(event: DeactivateEvent): void {
+  const callPoolStatsId = event.address.toHexString();
+  const callPoolStats = getCallPoolStats(callPoolStatsId);
+  callPoolStats.deactivate = true;
+  callPoolStats.save();
+}
 
-export function handleDepositETH(event: DepositETHEvent): void {}
-
-export function handlePaused(event: PausedEvent): void {}
-export function handleUnpaused(event: UnpausedEvent): void {}
+export function handlePaused(event: PausedEvent): void {
+  const callPoolStatsId = event.address.toHexString();
+  const callPoolStats = getCallPoolStats(callPoolStatsId);
+  callPoolStats.paused = true;
+  callPoolStats.save();
+}
+export function handleUnpaused(event: UnpausedEvent): void {
+  const callPoolStatsId = event.address.toHexString();
+  const callPoolStats = getCallPoolStats(callPoolStatsId);
+  callPoolStats.paused = false;
+  callPoolStats.save();
+}

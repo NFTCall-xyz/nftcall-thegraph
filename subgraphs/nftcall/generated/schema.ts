@@ -601,6 +601,24 @@ export class CallPoolStat extends Entity {
     this.set("totalListedNFTs", Value.fromI32(value));
   }
 
+  get paused(): boolean {
+    let value = this.get("paused");
+    return value!.toBoolean();
+  }
+
+  set paused(value: boolean) {
+    this.set("paused", Value.fromBoolean(value));
+  }
+
+  get deactivate(): boolean {
+    let value = this.get("deactivate");
+    return value!.toBoolean();
+  }
+
+  set deactivate(value: boolean) {
+    this.set("deactivate", Value.fromBoolean(value));
+  }
+
   get nfts(): Array<string> {
     let value = this.get("nfts");
     return value!.toStringArray();

@@ -104,18 +104,6 @@ export class Mint__Params {
   get tokenId(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
-
-  get exercisePrice(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-
-  get exercisePeriodBegin(): BigInt {
-    return this._event.parameters[3].value.toBigInt();
-  }
-
-  get exercisePeriodEnd(): BigInt {
-    return this._event.parameters[4].value.toBigInt();
-  }
 }
 
 export class OwnershipTransferred extends ethereum.Event {
@@ -166,20 +154,6 @@ export class Transfer__Params {
   }
 }
 
-export class CallToken__getCallInfoResultValue0Struct extends ethereum.Tuple {
-  get exerciseTime(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get endTime(): BigInt {
-    return this[1].toBigInt();
-  }
-
-  get strikePrice(): BigInt {
-    return this[2].toBigInt();
-  }
-}
-
 export class CallToken extends ethereum.SmartContract {
   static bind(address: Address): CallToken {
     return new CallToken("CallToken", address);
@@ -223,35 +197,6 @@ export class CallToken extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  getCallInfo(tokenId: BigInt): CallToken__getCallInfoResultValue0Struct {
-    let result = super.call(
-      "getCallInfo",
-      "getCallInfo(uint256):((uint256,uint256,uint256))",
-      [ethereum.Value.fromUnsignedBigInt(tokenId)]
-    );
-
-    return changetype<CallToken__getCallInfoResultValue0Struct>(
-      result[0].toTuple()
-    );
-  }
-
-  try_getCallInfo(
-    tokenId: BigInt
-  ): ethereum.CallResult<CallToken__getCallInfoResultValue0Struct> {
-    let result = super.tryCall(
-      "getCallInfo",
-      "getCallInfo(uint256):((uint256,uint256,uint256))",
-      [ethereum.Value.fromUnsignedBigInt(tokenId)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(
-      changetype<CallToken__getCallInfoResultValue0Struct>(value[0].toTuple())
-    );
   }
 
   isApprovedForAll(owner: Address, operator: Address): boolean {
@@ -382,6 +327,59 @@ export class CallToken extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toString());
   }
 
+  tokenByIndex(index: BigInt): BigInt {
+    let result = super.call("tokenByIndex", "tokenByIndex(uint256):(uint256)", [
+      ethereum.Value.fromUnsignedBigInt(index)
+    ]);
+
+    return result[0].toBigInt();
+  }
+
+  try_tokenByIndex(index: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "tokenByIndex",
+      "tokenByIndex(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(index)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  tokenOfOwnerByIndex(owner: Address, index: BigInt): BigInt {
+    let result = super.call(
+      "tokenOfOwnerByIndex",
+      "tokenOfOwnerByIndex(address,uint256):(uint256)",
+      [
+        ethereum.Value.fromAddress(owner),
+        ethereum.Value.fromUnsignedBigInt(index)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_tokenOfOwnerByIndex(
+    owner: Address,
+    index: BigInt
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "tokenOfOwnerByIndex",
+      "tokenOfOwnerByIndex(address,uint256):(uint256)",
+      [
+        ethereum.Value.fromAddress(owner),
+        ethereum.Value.fromUnsignedBigInt(index)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   tokenURI(tokenId: BigInt): string {
     let result = super.call("tokenURI", "tokenURI(uint256):(string)", [
       ethereum.Value.fromUnsignedBigInt(tokenId)
@@ -399,6 +397,21 @@ export class CallToken extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toString());
+  }
+
+  totalSupply(): BigInt {
+    let result = super.call("totalSupply", "totalSupply():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_totalSupply(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("totalSupply", "totalSupply():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 }
 
@@ -516,24 +529,46 @@ export class MintCall__Inputs {
   get tokenId(): BigInt {
     return this._call.inputValues[1].value.toBigInt();
   }
-
-  get strikePrice(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-
-  get duration(): BigInt {
-    return this._call.inputValues[3].value.toBigInt();
-  }
-
-  get exercisePeriodProportion(): BigInt {
-    return this._call.inputValues[4].value.toBigInt();
-  }
 }
 
 export class MintCall__Outputs {
   _call: MintCall;
 
   constructor(call: MintCall) {
+    this._call = call;
+  }
+}
+
+export class OpenCall extends ethereum.Call {
+  get inputs(): OpenCall__Inputs {
+    return new OpenCall__Inputs(this);
+  }
+
+  get outputs(): OpenCall__Outputs {
+    return new OpenCall__Outputs(this);
+  }
+}
+
+export class OpenCall__Inputs {
+  _call: OpenCall;
+
+  constructor(call: OpenCall) {
+    this._call = call;
+  }
+
+  get user(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class OpenCall__Outputs {
+  _call: OpenCall;
+
+  constructor(call: OpenCall) {
     this._call = call;
   }
 }
@@ -560,52 +595,6 @@ export class RenounceOwnershipCall__Outputs {
   _call: RenounceOwnershipCall;
 
   constructor(call: RenounceOwnershipCall) {
-    this._call = call;
-  }
-}
-
-export class ReopenCall extends ethereum.Call {
-  get inputs(): ReopenCall__Inputs {
-    return new ReopenCall__Inputs(this);
-  }
-
-  get outputs(): ReopenCall__Outputs {
-    return new ReopenCall__Outputs(this);
-  }
-}
-
-export class ReopenCall__Inputs {
-  _call: ReopenCall;
-
-  constructor(call: ReopenCall) {
-    this._call = call;
-  }
-
-  get user(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get tokenId(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-
-  get strikePrice(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-
-  get duration(): BigInt {
-    return this._call.inputValues[3].value.toBigInt();
-  }
-
-  get exercisePeriodProportion(): BigInt {
-    return this._call.inputValues[4].value.toBigInt();
-  }
-}
-
-export class ReopenCall__Outputs {
-  _call: ReopenCall;
-
-  constructor(call: ReopenCall) {
     this._call = call;
   }
 }

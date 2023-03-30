@@ -3,12 +3,12 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: BeanzCallPool
+    name: DoodlesCallPool
     network: mainnet
     source:
-      address: "0x570A31EE6fB311bD1ae07674f99A36679ddDA1C9"
+      address: "0xfe28895eD8ABecb4A30b1E392032F05B96190D67"
       abi: CallPool
-      startBlock: 8477156
+      startBlock: 16881106
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -21,7 +21,6 @@ dataSources:
         - CollectProtocol
         - Deactivate
         - Deposit
-        - DepositETH
         - OffMarket
         - OnMarket
         - Paused
@@ -50,8 +49,6 @@ dataSources:
           handler: handleDeactivate
         - event: Deposit(indexed address,address,indexed address,indexed uint256)
           handler: handleDeposit
-        - event: DepositETH(indexed address,indexed address,uint256)
-          handler: handleDepositETH
         - event: OffMarket(indexed address,indexed address,indexed uint256)
           handler: handleOffMarket
         - event: OnMarket(indexed address,indexed address,indexed uint256)
@@ -71,12 +68,12 @@ dataSources:
       file: ./src/call-pool.ts
 
   - kind: ethereum
-    name: PotatozCallPool
+    name: AzukiCallPool
     network: mainnet
     source:
-      address: "0xFEB94488C31c5002aBd5c98205B061Ca3003e806"
+      address: "0xFb51B9d5CaDA2DcFAd8aBe0c69A7F2C38D39D25B"
       abi: CallPool
-      startBlock: 8477156
+      startBlock: 16894440
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -89,7 +86,6 @@ dataSources:
         - CollectProtocol
         - Deactivate
         - Deposit
-        - DepositETH
         - OffMarket
         - OnMarket
         - Paused
@@ -118,8 +114,6 @@ dataSources:
           handler: handleDeactivate
         - event: Deposit(indexed address,address,indexed address,indexed uint256)
           handler: handleDeposit
-        - event: DepositETH(indexed address,indexed address,uint256)
-          handler: handleDepositETH
         - event: OffMarket(indexed address,indexed address,indexed uint256)
           handler: handleOffMarket
         - event: OnMarket(indexed address,indexed address,indexed uint256)
@@ -139,12 +133,12 @@ dataSources:
       file: ./src/call-pool.ts
 
   - kind: ethereum
-    name: ValhallaCallPool
+    name: CloneXCallPool
     network: mainnet
     source:
-      address: "0xd6314163989675CC71f16e4A6060c1C3b0829Ae4"
+      address: "0xe93948B6e3Cc2C24ff284a1c82723aA1EC2669aa"
       abi: CallPool
-      startBlock: 8477156
+      startBlock: 16902016
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -157,7 +151,6 @@ dataSources:
         - CollectProtocol
         - Deactivate
         - Deposit
-        - DepositETH
         - OffMarket
         - OnMarket
         - Paused
@@ -186,8 +179,6 @@ dataSources:
           handler: handleDeactivate
         - event: Deposit(indexed address,address,indexed address,indexed uint256)
           handler: handleDeposit
-        - event: DepositETH(indexed address,indexed address,uint256)
-          handler: handleDepositETH
         - event: OffMarket(indexed address,indexed address,indexed uint256)
           handler: handleOffMarket
         - event: OnMarket(indexed address,indexed address,indexed uint256)
@@ -207,12 +198,12 @@ dataSources:
       file: ./src/call-pool.ts
 
   - kind: ethereum
-    name: ChecksCallPool
+    name: BAYCCallPool
     network: mainnet
     source:
-      address: "0xe67f5188d41855012dbe794683cDdc69b5911272"
+      address: "0xb680294F83baA823943E369570eBf2634c9068f6"
       abi: CallPool
-      startBlock: 8477156
+      startBlock: 16902016
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -225,7 +216,6 @@ dataSources:
         - CollectProtocol
         - Deactivate
         - Deposit
-        - DepositETH
         - OffMarket
         - OnMarket
         - Paused
@@ -254,8 +244,6 @@ dataSources:
           handler: handleDeactivate
         - event: Deposit(indexed address,address,indexed address,indexed uint256)
           handler: handleDeposit
-        - event: DepositETH(indexed address,indexed address,uint256)
-          handler: handleDepositETH
         - event: OffMarket(indexed address,indexed address,indexed uint256)
           handler: handleOffMarket
         - event: OnMarket(indexed address,indexed address,indexed uint256)
@@ -275,12 +263,12 @@ dataSources:
       file: ./src/call-pool.ts
 
   - kind: ethereum
-    name: OtherdeedCallPool
+    name: MAYCCallPool
     network: mainnet
     source:
-      address: "0x6C2E49A9a997F118468926A7a1C6998e85Af81c1"
+      address: "0x3dD81fDc20d6d8B7D71bD5C6B7916443D92BDbC1"
       abi: CallPool
-      startBlock: 8477156
+      startBlock: 16902016
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -293,7 +281,6 @@ dataSources:
         - CollectProtocol
         - Deactivate
         - Deposit
-        - DepositETH
         - OffMarket
         - OnMarket
         - Paused
@@ -322,8 +309,71 @@ dataSources:
           handler: handleDeactivate
         - event: Deposit(indexed address,address,indexed address,indexed uint256)
           handler: handleDeposit
-        - event: DepositETH(indexed address,indexed address,uint256)
-          handler: handleDepositETH
+        - event: OffMarket(indexed address,indexed address,indexed uint256)
+          handler: handleOffMarket
+        - event: OnMarket(indexed address,indexed address,indexed uint256)
+          handler: handleOnMarket
+        - event: Paused(address)
+          handler: handlePaused
+        - event: PreferenceUpdated(indexed address,indexed uint256,uint8,uint8,uint256)
+          handler: handlePreferenceUpdated
+        - event: PremiumReceived(indexed address,indexed address,indexed uint256,uint256,uint256)
+          handler: handlePremiumReceived
+        - event: Unpaused(address)
+          handler: handleUnpaused
+        - event: Withdraw(indexed address,indexed address,address,indexed uint256)
+          handler: handleWithdraw
+        - event: WithdrawETH(indexed address,indexed address,uint256)
+          handler: handleWithdrawETH
+      file: ./src/call-pool.ts
+
+  - kind: ethereum
+    name: MoonbirdsCallPool
+    network: mainnet
+    source:
+      address: "0xF432A9b6c0a9070c64baCC25FC1E340c953d48CE"
+      abi: CallPool
+      startBlock: 16902016
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Activate
+        - BalanceChangedETH
+        - CallClosed
+        - CallOpened
+        - CollectProtocol
+        - Deactivate
+        - Deposit
+        - OffMarket
+        - OnMarket
+        - Paused
+        - PreferenceUpdated
+        - PremiumReceived
+        - Unpaused
+        - Withdraw
+        - WithdrawETH
+      abis:
+        - name: CallPool
+          file: ./abis/CallPool.json
+        - name: NFTOracle
+          file: ./abis/NFTOracle.json
+      eventHandlers:
+        - event: Activate(address)
+          handler: handleActivate
+        - event: BalanceChangedETH(indexed address,uint256)
+          handler: handleBalanceChangedETH
+        - event: CallClosed(indexed address,indexed address,address,indexed uint256,uint256)
+          handler: handleCallClosed
+        - event: CallOpened(indexed address,indexed address,indexed uint256,uint8,uint8,uint256,uint40,uint40)
+          handler: handleCallOpened
+        - event: CollectProtocol(indexed address,indexed address,uint256)
+          handler: handleCollectProtocol
+        - event: Deactivate(address)
+          handler: handleDeactivate
+        - event: Deposit(indexed address,address,indexed address,indexed uint256)
+          handler: handleDeposit
         - event: OffMarket(indexed address,indexed address,indexed uint256)
           handler: handleOffMarket
         - event: OnMarket(indexed address,indexed address,indexed uint256)

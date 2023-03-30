@@ -204,32 +204,6 @@ export class Deposit__Params {
   }
 }
 
-export class DepositETH extends ethereum.Event {
-  get params(): DepositETH__Params {
-    return new DepositETH__Params(this);
-  }
-}
-
-export class DepositETH__Params {
-  _event: DepositETH;
-
-  constructor(event: DepositETH) {
-    this._event = event;
-  }
-
-  get user(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get receiver(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-
-  get amount(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-}
-
 export class OffMarket extends ethereum.Event {
   get params(): OffMarket__Params {
     return new OffMarket__Params(this);
@@ -443,6 +417,36 @@ export class WithdrawETH__Params {
 }
 
 export class CallPool__getNFTStatusResultValue0Struct extends ethereum.Tuple {
+  get ifOnMarket(): boolean {
+    return this[0].toBoolean();
+  }
+
+  get minimumStrikeGapIdx(): i32 {
+    return this[1].toI32();
+  }
+
+  get maximumDurationIdx(): i32 {
+    return this[2].toI32();
+  }
+
+  get exerciseTime(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get endTime(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get minimumStrikePrice(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get strikePrice(): BigInt {
+    return this[6].toBigInt();
+  }
+}
+
+export class CallPool__getNFTStatusBatchResultValue0Struct extends ethereum.Tuple {
   get ifOnMarket(): boolean {
     return this[0].toBoolean();
   }
@@ -693,6 +697,49 @@ export class CallPool extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  changePreferenceBatch(
+    tokenIds: Array<BigInt>,
+    lowerStrikePriceGapIdxList: Array<i32>,
+    upperDurationIdxList: Array<i32>,
+    minimumStrikePriceList: Array<BigInt>
+  ): Array<BigInt> {
+    let result = super.call(
+      "changePreferenceBatch",
+      "changePreferenceBatch(uint256[],uint8[],uint8[],uint256[]):(uint256[])",
+      [
+        ethereum.Value.fromUnsignedBigIntArray(tokenIds),
+        ethereum.Value.fromI32Array(lowerStrikePriceGapIdxList),
+        ethereum.Value.fromI32Array(upperDurationIdxList),
+        ethereum.Value.fromUnsignedBigIntArray(minimumStrikePriceList)
+      ]
+    );
+
+    return result[0].toBigIntArray();
+  }
+
+  try_changePreferenceBatch(
+    tokenIds: Array<BigInt>,
+    lowerStrikePriceGapIdxList: Array<i32>,
+    upperDurationIdxList: Array<i32>,
+    minimumStrikePriceList: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
+    let result = super.tryCall(
+      "changePreferenceBatch",
+      "changePreferenceBatch(uint256[],uint8[],uint8[],uint256[]):(uint256[])",
+      [
+        ethereum.Value.fromUnsignedBigIntArray(tokenIds),
+        ethereum.Value.fromI32Array(lowerStrikePriceGapIdxList),
+        ethereum.Value.fromI32Array(upperDurationIdxList),
+        ethereum.Value.fromUnsignedBigIntArray(minimumStrikePriceList)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
+  }
+
   checkAvailable(tokenId: BigInt): boolean {
     let result = super.call(
       "checkAvailable",
@@ -746,6 +793,85 @@ export class CallPool extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  depositBatch(onBehalfOf: Address, tokenIds: Array<BigInt>): Array<BigInt> {
+    let result = super.call(
+      "depositBatch",
+      "depositBatch(address,uint256[]):(uint256[])",
+      [
+        ethereum.Value.fromAddress(onBehalfOf),
+        ethereum.Value.fromUnsignedBigIntArray(tokenIds)
+      ]
+    );
+
+    return result[0].toBigIntArray();
+  }
+
+  try_depositBatch(
+    onBehalfOf: Address,
+    tokenIds: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
+    let result = super.tryCall(
+      "depositBatch",
+      "depositBatch(address,uint256[]):(uint256[])",
+      [
+        ethereum.Value.fromAddress(onBehalfOf),
+        ethereum.Value.fromUnsignedBigIntArray(tokenIds)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
+  }
+
+  depositWithPreferenceBatch(
+    onBehalfOf: Address,
+    tokenIds: Array<BigInt>,
+    lowerStrikePriceGapIdxList: Array<i32>,
+    upperDurationIdxList: Array<i32>,
+    minimumStrikePriceList: Array<BigInt>
+  ): Array<BigInt> {
+    let result = super.call(
+      "depositWithPreferenceBatch",
+      "depositWithPreferenceBatch(address,uint256[],uint8[],uint8[],uint256[]):(uint256[])",
+      [
+        ethereum.Value.fromAddress(onBehalfOf),
+        ethereum.Value.fromUnsignedBigIntArray(tokenIds),
+        ethereum.Value.fromI32Array(lowerStrikePriceGapIdxList),
+        ethereum.Value.fromI32Array(upperDurationIdxList),
+        ethereum.Value.fromUnsignedBigIntArray(minimumStrikePriceList)
+      ]
+    );
+
+    return result[0].toBigIntArray();
+  }
+
+  try_depositWithPreferenceBatch(
+    onBehalfOf: Address,
+    tokenIds: Array<BigInt>,
+    lowerStrikePriceGapIdxList: Array<i32>,
+    upperDurationIdxList: Array<i32>,
+    minimumStrikePriceList: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
+    let result = super.tryCall(
+      "depositWithPreferenceBatch",
+      "depositWithPreferenceBatch(address,uint256[],uint8[],uint8[],uint256[]):(uint256[])",
+      [
+        ethereum.Value.fromAddress(onBehalfOf),
+        ethereum.Value.fromUnsignedBigIntArray(tokenIds),
+        ethereum.Value.fromI32Array(lowerStrikePriceGapIdxList),
+        ethereum.Value.fromI32Array(upperDurationIdxList),
+        ethereum.Value.fromUnsignedBigIntArray(minimumStrikePriceList)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
   }
 
   exercisePeriodProportion(): i32 {
@@ -831,6 +957,37 @@ export class CallPool extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(
       changetype<CallPool__getNFTStatusResultValue0Struct>(value[0].toTuple())
+    );
+  }
+
+  getNFTStatusBatch(
+    tokenIds: Array<BigInt>
+  ): Array<CallPool__getNFTStatusBatchResultValue0Struct> {
+    let result = super.call(
+      "getNFTStatusBatch",
+      "getNFTStatusBatch(uint256[]):((bool,uint8,uint8,uint256,uint256,uint256,uint256)[])",
+      [ethereum.Value.fromUnsignedBigIntArray(tokenIds)]
+    );
+
+    return result[0].toTupleArray<
+      CallPool__getNFTStatusBatchResultValue0Struct
+    >();
+  }
+
+  try_getNFTStatusBatch(
+    tokenIds: Array<BigInt>
+  ): ethereum.CallResult<Array<CallPool__getNFTStatusBatchResultValue0Struct>> {
+    let result = super.tryCall(
+      "getNFTStatusBatch",
+      "getNFTStatusBatch(uint256[]):((bool,uint8,uint8,uint256,uint256,uint256,uint256)[])",
+      [ethereum.Value.fromUnsignedBigIntArray(tokenIds)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      value[0].toTupleArray<CallPool__getNFTStatusBatchResultValue0Struct>()
     );
   }
 
@@ -1034,6 +1191,56 @@ export class CallPool extends ethereum.SmartContract {
     );
   }
 
+  relistNFTBatch(tokenIds: Array<BigInt>): Array<BigInt> {
+    let result = super.call(
+      "relistNFTBatch",
+      "relistNFTBatch(uint256[]):(uint256[])",
+      [ethereum.Value.fromUnsignedBigIntArray(tokenIds)]
+    );
+
+    return result[0].toBigIntArray();
+  }
+
+  try_relistNFTBatch(
+    tokenIds: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
+    let result = super.tryCall(
+      "relistNFTBatch",
+      "relistNFTBatch(uint256[]):(uint256[])",
+      [ethereum.Value.fromUnsignedBigIntArray(tokenIds)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
+  }
+
+  takeNFTOffMarketBatch(tokenIds: Array<BigInt>): Array<BigInt> {
+    let result = super.call(
+      "takeNFTOffMarketBatch",
+      "takeNFTOffMarketBatch(uint256[]):(uint256[])",
+      [ethereum.Value.fromUnsignedBigIntArray(tokenIds)]
+    );
+
+    return result[0].toBigIntArray();
+  }
+
+  try_takeNFTOffMarketBatch(
+    tokenIds: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
+    let result = super.tryCall(
+      "takeNFTOffMarketBatch",
+      "takeNFTOffMarketBatch(uint256[]):(uint256[])",
+      [ethereum.Value.fromUnsignedBigIntArray(tokenIds)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
+  }
+
   totalOpenInterest(): BigInt {
     let result = super.call(
       "totalOpenInterest",
@@ -1055,6 +1262,38 @@ export class CallPool extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  withdrawBatch(to: Address, tokenIds: Array<BigInt>): Array<BigInt> {
+    let result = super.call(
+      "withdrawBatch",
+      "withdrawBatch(address,uint256[]):(uint256[])",
+      [
+        ethereum.Value.fromAddress(to),
+        ethereum.Value.fromUnsignedBigIntArray(tokenIds)
+      ]
+    );
+
+    return result[0].toBigIntArray();
+  }
+
+  try_withdrawBatch(
+    to: Address,
+    tokenIds: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
+    let result = super.tryCall(
+      "withdrawBatch",
+      "withdrawBatch(address,uint256[]):(uint256[])",
+      [
+        ethereum.Value.fromAddress(to),
+        ethereum.Value.fromUnsignedBigIntArray(tokenIds)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
   }
 
   withdrawETH(to: Address, amount: BigInt): BigInt {
@@ -1181,6 +1420,52 @@ export class ChangePreferenceCall__Outputs {
   }
 }
 
+export class ChangePreferenceBatchCall extends ethereum.Call {
+  get inputs(): ChangePreferenceBatchCall__Inputs {
+    return new ChangePreferenceBatchCall__Inputs(this);
+  }
+
+  get outputs(): ChangePreferenceBatchCall__Outputs {
+    return new ChangePreferenceBatchCall__Outputs(this);
+  }
+}
+
+export class ChangePreferenceBatchCall__Inputs {
+  _call: ChangePreferenceBatchCall;
+
+  constructor(call: ChangePreferenceBatchCall) {
+    this._call = call;
+  }
+
+  get tokenIds(): Array<BigInt> {
+    return this._call.inputValues[0].value.toBigIntArray();
+  }
+
+  get lowerStrikePriceGapIdxList(): Array<i32> {
+    return this._call.inputValues[1].value.toI32Array();
+  }
+
+  get upperDurationIdxList(): Array<i32> {
+    return this._call.inputValues[2].value.toI32Array();
+  }
+
+  get minimumStrikePriceList(): Array<BigInt> {
+    return this._call.inputValues[3].value.toBigIntArray();
+  }
+}
+
+export class ChangePreferenceBatchCall__Outputs {
+  _call: ChangePreferenceBatchCall;
+
+  constructor(call: ChangePreferenceBatchCall) {
+    this._call = call;
+  }
+
+  get value0(): Array<BigInt> {
+    return this._call.outputValues[0].value.toBigIntArray();
+  }
+}
+
 export class CollectProtocolCall extends ethereum.Call {
   get inputs(): CollectProtocolCall__Inputs {
     return new CollectProtocolCall__Inputs(this);
@@ -1279,6 +1564,44 @@ export class DepositCall__Outputs {
   }
 }
 
+export class DepositBatchCall extends ethereum.Call {
+  get inputs(): DepositBatchCall__Inputs {
+    return new DepositBatchCall__Inputs(this);
+  }
+
+  get outputs(): DepositBatchCall__Outputs {
+    return new DepositBatchCall__Outputs(this);
+  }
+}
+
+export class DepositBatchCall__Inputs {
+  _call: DepositBatchCall;
+
+  constructor(call: DepositBatchCall) {
+    this._call = call;
+  }
+
+  get onBehalfOf(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get tokenIds(): Array<BigInt> {
+    return this._call.inputValues[1].value.toBigIntArray();
+  }
+}
+
+export class DepositBatchCall__Outputs {
+  _call: DepositBatchCall;
+
+  constructor(call: DepositBatchCall) {
+    this._call = call;
+  }
+
+  get value0(): Array<BigInt> {
+    return this._call.outputValues[0].value.toBigIntArray();
+  }
+}
+
 export class DepositWithPreferenceCall extends ethereum.Call {
   get inputs(): DepositWithPreferenceCall__Inputs {
     return new DepositWithPreferenceCall__Inputs(this);
@@ -1325,6 +1648,56 @@ export class DepositWithPreferenceCall__Outputs {
   }
 }
 
+export class DepositWithPreferenceBatchCall extends ethereum.Call {
+  get inputs(): DepositWithPreferenceBatchCall__Inputs {
+    return new DepositWithPreferenceBatchCall__Inputs(this);
+  }
+
+  get outputs(): DepositWithPreferenceBatchCall__Outputs {
+    return new DepositWithPreferenceBatchCall__Outputs(this);
+  }
+}
+
+export class DepositWithPreferenceBatchCall__Inputs {
+  _call: DepositWithPreferenceBatchCall;
+
+  constructor(call: DepositWithPreferenceBatchCall) {
+    this._call = call;
+  }
+
+  get onBehalfOf(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get tokenIds(): Array<BigInt> {
+    return this._call.inputValues[1].value.toBigIntArray();
+  }
+
+  get lowerStrikePriceGapIdxList(): Array<i32> {
+    return this._call.inputValues[2].value.toI32Array();
+  }
+
+  get upperDurationIdxList(): Array<i32> {
+    return this._call.inputValues[3].value.toI32Array();
+  }
+
+  get minimumStrikePriceList(): Array<BigInt> {
+    return this._call.inputValues[4].value.toBigIntArray();
+  }
+}
+
+export class DepositWithPreferenceBatchCall__Outputs {
+  _call: DepositWithPreferenceBatchCall;
+
+  constructor(call: DepositWithPreferenceBatchCall) {
+    this._call = call;
+  }
+
+  get value0(): Array<BigInt> {
+    return this._call.outputValues[0].value.toBigIntArray();
+  }
+}
+
 export class ExerciseCallCall extends ethereum.Call {
   get inputs(): ExerciseCallCall__Inputs {
     return new ExerciseCallCall__Inputs(this);
@@ -1352,6 +1725,40 @@ export class ExerciseCallCall__Outputs {
 
   constructor(call: ExerciseCallCall) {
     this._call = call;
+  }
+}
+
+export class ExerciseCallBatchCall extends ethereum.Call {
+  get inputs(): ExerciseCallBatchCall__Inputs {
+    return new ExerciseCallBatchCall__Inputs(this);
+  }
+
+  get outputs(): ExerciseCallBatchCall__Outputs {
+    return new ExerciseCallBatchCall__Outputs(this);
+  }
+}
+
+export class ExerciseCallBatchCall__Inputs {
+  _call: ExerciseCallBatchCall;
+
+  constructor(call: ExerciseCallBatchCall) {
+    this._call = call;
+  }
+
+  get tokenIds(): Array<BigInt> {
+    return this._call.inputValues[0].value.toBigIntArray();
+  }
+}
+
+export class ExerciseCallBatchCall__Outputs {
+  _call: ExerciseCallBatchCall;
+
+  constructor(call: ExerciseCallBatchCall) {
+    this._call = call;
+  }
+
+  get value0(): Array<BigInt> {
+    return this._call.outputValues[0].value.toBigIntArray();
   }
 }
 
@@ -1487,6 +1894,40 @@ export class RelistNFTCall__Outputs {
   }
 }
 
+export class RelistNFTBatchCall extends ethereum.Call {
+  get inputs(): RelistNFTBatchCall__Inputs {
+    return new RelistNFTBatchCall__Inputs(this);
+  }
+
+  get outputs(): RelistNFTBatchCall__Outputs {
+    return new RelistNFTBatchCall__Outputs(this);
+  }
+}
+
+export class RelistNFTBatchCall__Inputs {
+  _call: RelistNFTBatchCall;
+
+  constructor(call: RelistNFTBatchCall) {
+    this._call = call;
+  }
+
+  get tokenIds(): Array<BigInt> {
+    return this._call.inputValues[0].value.toBigIntArray();
+  }
+}
+
+export class RelistNFTBatchCall__Outputs {
+  _call: RelistNFTBatchCall;
+
+  constructor(call: RelistNFTBatchCall) {
+    this._call = call;
+  }
+
+  get value0(): Array<BigInt> {
+    return this._call.outputValues[0].value.toBigIntArray();
+  }
+}
+
 export class TakeNFTOffMarketCall extends ethereum.Call {
   get inputs(): TakeNFTOffMarketCall__Inputs {
     return new TakeNFTOffMarketCall__Inputs(this);
@@ -1513,6 +1954,78 @@ export class TakeNFTOffMarketCall__Outputs {
   _call: TakeNFTOffMarketCall;
 
   constructor(call: TakeNFTOffMarketCall) {
+    this._call = call;
+  }
+}
+
+export class TakeNFTOffMarketBatchCall extends ethereum.Call {
+  get inputs(): TakeNFTOffMarketBatchCall__Inputs {
+    return new TakeNFTOffMarketBatchCall__Inputs(this);
+  }
+
+  get outputs(): TakeNFTOffMarketBatchCall__Outputs {
+    return new TakeNFTOffMarketBatchCall__Outputs(this);
+  }
+}
+
+export class TakeNFTOffMarketBatchCall__Inputs {
+  _call: TakeNFTOffMarketBatchCall;
+
+  constructor(call: TakeNFTOffMarketBatchCall) {
+    this._call = call;
+  }
+
+  get tokenIds(): Array<BigInt> {
+    return this._call.inputValues[0].value.toBigIntArray();
+  }
+}
+
+export class TakeNFTOffMarketBatchCall__Outputs {
+  _call: TakeNFTOffMarketBatchCall;
+
+  constructor(call: TakeNFTOffMarketBatchCall) {
+    this._call = call;
+  }
+
+  get value0(): Array<BigInt> {
+    return this._call.outputValues[0].value.toBigIntArray();
+  }
+}
+
+export class TransferERC721Call extends ethereum.Call {
+  get inputs(): TransferERC721Call__Inputs {
+    return new TransferERC721Call__Inputs(this);
+  }
+
+  get outputs(): TransferERC721Call__Outputs {
+    return new TransferERC721Call__Outputs(this);
+  }
+}
+
+export class TransferERC721Call__Inputs {
+  _call: TransferERC721Call;
+
+  constructor(call: TransferERC721Call) {
+    this._call = call;
+  }
+
+  get collection(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get recipient(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class TransferERC721Call__Outputs {
+  _call: TransferERC721Call;
+
+  constructor(call: TransferERC721Call) {
     this._call = call;
   }
 }
@@ -1574,6 +2087,44 @@ export class WithdrawCall__Outputs {
 
   constructor(call: WithdrawCall) {
     this._call = call;
+  }
+}
+
+export class WithdrawBatchCall extends ethereum.Call {
+  get inputs(): WithdrawBatchCall__Inputs {
+    return new WithdrawBatchCall__Inputs(this);
+  }
+
+  get outputs(): WithdrawBatchCall__Outputs {
+    return new WithdrawBatchCall__Outputs(this);
+  }
+}
+
+export class WithdrawBatchCall__Inputs {
+  _call: WithdrawBatchCall;
+
+  constructor(call: WithdrawBatchCall) {
+    this._call = call;
+  }
+
+  get to(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get tokenIds(): Array<BigInt> {
+    return this._call.inputValues[1].value.toBigIntArray();
+  }
+}
+
+export class WithdrawBatchCall__Outputs {
+  _call: WithdrawBatchCall;
+
+  constructor(call: WithdrawBatchCall) {
+    this._call = call;
+  }
+
+  get value0(): Array<BigInt> {
+    return this._call.outputValues[0].value.toBigIntArray();
   }
 }
 
