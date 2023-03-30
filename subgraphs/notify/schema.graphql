@@ -8,6 +8,7 @@ type CallClosed @entity(immutable: true) {
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+  pool: Bytes! # address
 }
 
 type CallOpened @entity(immutable: true) {
@@ -23,4 +24,6 @@ type CallOpened @entity(immutable: true) {
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+  pool: Bytes! # address
+  owner: Bytes! # address
 }
