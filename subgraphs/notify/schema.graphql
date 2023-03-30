@@ -1,0 +1,26 @@
+type CallClosed @entity(immutable: true) {
+  id: Bytes!
+  nft: Bytes! # address
+  user: Bytes! # address
+  owner: Bytes! # address
+  tokenId: BigInt! # uint256
+  price: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CallOpened @entity(immutable: true) {
+  id: Bytes!
+  nft: Bytes! # address
+  user: Bytes! # address
+  tokenId: BigInt! # uint256
+  strikePriceGapIdx: Int! # uint8
+  durationIdx: Int! # uint8
+  exercisePrice: BigInt! # uint256
+  exercisePeriodBegin: BigInt! # uint40
+  exercisePeriodEnd: BigInt! # uint40
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

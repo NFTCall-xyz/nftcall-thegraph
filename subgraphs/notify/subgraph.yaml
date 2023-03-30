@@ -1,0 +1,81 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: CloneXPool
+    network: goerli
+    source:
+      address: "0x07A25d47C815746A2794A5B053d121c529b14CA1"
+      abi: CallPool
+      startBlock: 8629992
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CallClosed
+        - CallOpened
+      abis:
+        - name: CallPool
+          file: ./abis/CallPool.json
+        - name: NToken
+          file: ./abis/NToken.json
+      eventHandlers:
+        - event: CallClosed(indexed address,indexed address,address,indexed uint256,uint256)
+          handler: handleCallClosed
+        - event: CallOpened(indexed address,indexed address,indexed uint256,uint8,uint8,uint256,uint40,uint40)
+          handler: handleCallOpened
+      file: ./src/call-pool.ts
+
+  - kind: ethereum
+    name: DoodlePool
+    network: goerli
+    source:
+      address: "0x2Bd403c8f0a3B0Bd847b16b813Eb97E5807786CF"
+      abi: CallPool
+      startBlock: 8629992
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CallClosed
+        - CallOpened
+      abis:
+        - name: CallPool
+          file: ./abis/CallPool.json
+        - name: NToken
+          file: ./abis/NToken.json
+      eventHandlers:
+        - event: CallClosed(indexed address,indexed address,address,indexed uint256,uint256)
+          handler: handleCallClosed
+        - event: CallOpened(indexed address,indexed address,indexed uint256,uint8,uint8,uint256,uint40,uint40)
+          handler: handleCallOpened
+      file: ./src/call-pool.ts
+
+  - kind: ethereum
+    name: MoonbirdsPool
+    network: goerli
+    source:
+      address: "0x1fDE610Ee201EA4144923172650026b9C1f0ad8B"
+      abi: CallPool
+      startBlock: 8629992
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CallClosed
+        - CallOpened
+      abis:
+        - name: CallPool
+          file: ./abis/CallPool.json
+        - name: NToken
+          file: ./abis/NToken.json
+      eventHandlers:
+        - event: CallClosed(indexed address,indexed address,address,indexed uint256,uint256)
+          handler: handleCallClosed
+        - event: CallOpened(indexed address,indexed address,indexed uint256,uint8,uint8,uint256,uint40,uint40)
+          handler: handleCallOpened
+      file: ./src/call-pool.ts
