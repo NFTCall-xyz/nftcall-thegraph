@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts";
+import { BigInt, log } from "@graphprotocol/graph-ts";
 import {
   BalanceChangedETH as BalanceChangedETHEvent,
   Activate as ActivateEvent,
@@ -32,6 +32,7 @@ import {
 } from "./adapter/userStat";
 
 export function handleCallClosed(event: CallClosedEvent): void {
+  log.info("handleCallClosed", []);
   const nftId = getNFTId(event.params.nft, event.params.tokenId);
   let nftRecord = NFT.load(nftId);
   if (!nftRecord || !nftRecord.position) return;
@@ -80,6 +81,7 @@ export function handleCallClosed(event: CallClosedEvent): void {
 }
 
 export function handleCallOpened(event: CallOpenedEvent): void {
+  log.info("handleCallOpened", []);
   const nftId = getNFTId(event.params.nft, event.params.tokenId);
   let nftRecord = NFT.load(nftId);
   if (!nftRecord) return;
