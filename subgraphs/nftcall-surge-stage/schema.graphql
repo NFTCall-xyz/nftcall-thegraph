@@ -1,0 +1,85 @@
+type CreateMarket @entity(immutable: true) {
+  id: Bytes!
+  collection: Bytes! # address
+  weight: BigInt! # uint32
+  optionToken: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CreateStrike @entity(immutable: true) {
+  id: Bytes!
+  strikeId: BigInt! # uint256
+  duration: BigInt! # uint256
+  expiration: BigInt! # uint256
+  spotPrice: BigInt! # uint256
+  strikePrice: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DestoryStrike @entity(immutable: true) {
+  id: Bytes!
+  strikeId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type OpenPosition @entity(immutable: true) {
+  id: Bytes!
+  collection: Bytes! # address
+  strikeId: BigInt! # uint256
+  positionId: BigInt! # uint256
+  estimatedPremium: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type OwnershipTransferred @entity(immutable: true) {
+  id: Bytes!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Paused @entity(immutable: true) {
+  id: Bytes!
+  account: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ReceivePremium @entity(immutable: true) {
+  id: Bytes!
+  user: Bytes! # address
+  amountToReserve: BigInt! # uint256
+  amountToLiquidityPool: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type SendRevenue @entity(immutable: true) {
+  id: Bytes!
+  receiver: Bytes! # address
+  amount: BigInt! # uint256
+  fee: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Unpaused @entity(immutable: true) {
+  id: Bytes!
+  account: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

@@ -1,0 +1,48 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Vault
+    network: arbitrum-goerli
+    source:
+      address: "0x13edf670f0aaaf0f4f3f1339a812300f83c86c93"
+      abi: Vault
+      startBlock: 20112150
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CreateMarket
+        - CreateStrike
+        - DestoryStrike
+        - OpenPosition
+        - OwnershipTransferred
+        - Paused
+        - ReceivePremium
+        - SendRevenue
+        - Unpaused
+      abis:
+        - name: Vault
+          file: ./abis/Vault.json
+      eventHandlers:
+        - event: CreateMarket(indexed address,uint32,address)
+          handler: handleCreateMarket
+        - event: CreateStrike(indexed uint256,uint256,uint256,uint256,uint256)
+          handler: handleCreateStrike
+        - event: DestoryStrike(indexed uint256)
+          handler: handleDestoryStrike
+        - event: OpenPosition(indexed address,indexed uint256,indexed uint256,uint256)
+          handler: handleOpenPosition
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: Paused(address)
+          handler: handlePaused
+        - event: ReceivePremium(indexed address,uint256,uint256)
+          handler: handleReceivePremium
+        - event: SendRevenue(indexed address,uint256,uint256)
+          handler: handleSendRevenue
+        - event: Unpaused(address)
+          handler: handleUnpaused
+      file: ./src/vault.ts
