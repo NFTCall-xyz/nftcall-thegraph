@@ -10,6 +10,28 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
+export class ActivateMarket extends ethereum.Event {
+  get params(): ActivateMarket__Params {
+    return new ActivateMarket__Params(this);
+  }
+}
+
+export class ActivateMarket__Params {
+  _event: ActivateMarket;
+
+  constructor(event: ActivateMarket) {
+    this._event = event;
+  }
+
+  get operator(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get collection(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class CreateMarket extends ethereum.Event {
   get params(): CreateMarket__Params {
     return new CreateMarket__Params(this);
@@ -70,6 +92,50 @@ export class CreateStrike__Params {
   }
 }
 
+export class DeactivateMarket extends ethereum.Event {
+  get params(): DeactivateMarket__Params {
+    return new DeactivateMarket__Params(this);
+  }
+}
+
+export class DeactivateMarket__Params {
+  _event: DeactivateMarket;
+
+  constructor(event: DeactivateMarket) {
+    this._event = event;
+  }
+
+  get operator(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get collection(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class DefreezeMarket extends ethereum.Event {
+  get params(): DefreezeMarket__Params {
+    return new DefreezeMarket__Params(this);
+  }
+}
+
+export class DefreezeMarket__Params {
+  _event: DefreezeMarket;
+
+  constructor(event: DefreezeMarket) {
+    this._event = event;
+  }
+
+  get operator(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get collection(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class DestoryStrike extends ethereum.Event {
   get params(): DestoryStrike__Params {
     return new DestoryStrike__Params(this);
@@ -85,6 +151,46 @@ export class DestoryStrike__Params {
 
   get strikeId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
+  }
+}
+
+export class FreezeMarket extends ethereum.Event {
+  get params(): FreezeMarket__Params {
+    return new FreezeMarket__Params(this);
+  }
+}
+
+export class FreezeMarket__Params {
+  _event: FreezeMarket;
+
+  constructor(event: FreezeMarket) {
+    this._event = event;
+  }
+
+  get operator(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get collection(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class KeeperAddressUpdated extends ethereum.Event {
+  get params(): KeeperAddressUpdated__Params {
+    return new KeeperAddressUpdated__Params(this);
+  }
+}
+
+export class KeeperAddressUpdated__Params {
+  _event: KeeperAddressUpdated;
+
+  constructor(event: KeeperAddressUpdated) {
+    this._event = event;
+  }
+
+  get keeperAddress(): Address {
+    return this._event.parameters[0].value.toAddress();
   }
 }
 
@@ -140,6 +246,24 @@ export class OwnershipTransferred__Params {
   }
 }
 
+export class PauseVault extends ethereum.Event {
+  get params(): PauseVault__Params {
+    return new PauseVault__Params(this);
+  }
+}
+
+export class PauseVault__Params {
+  _event: PauseVault;
+
+  constructor(event: PauseVault) {
+    this._event = event;
+  }
+
+  get operator(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
 export class Paused extends ethereum.Event {
   get params(): Paused__Params {
     return new Paused__Params(this);
@@ -155,6 +279,28 @@ export class Paused__Params {
 
   get account(): Address {
     return this._event.parameters[0].value.toAddress();
+  }
+}
+
+export class ReceiveKeeperFee extends ethereum.Event {
+  get params(): ReceiveKeeperFee__Params {
+    return new ReceiveKeeperFee__Params(this);
+  }
+}
+
+export class ReceiveKeeperFee__Params {
+  _event: ReceiveKeeperFee;
+
+  constructor(event: ReceiveKeeperFee) {
+    this._event = event;
+  }
+
+  get user(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
   }
 }
 
@@ -210,6 +356,24 @@ export class SendRevenue__Params {
   }
 }
 
+export class UnpauseVault extends ethereum.Event {
+  get params(): UnpauseVault__Params {
+    return new UnpauseVault__Params(this);
+  }
+}
+
+export class UnpauseVault__Params {
+  _event: UnpauseVault;
+
+  constructor(event: UnpauseVault) {
+    this._event = event;
+  }
+
+  get operator(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
 export class Unpaused extends ethereum.Event {
   get params(): Unpaused__Params {
     return new Unpaused__Params(this);
@@ -228,8 +392,30 @@ export class Unpaused__Params {
   }
 }
 
+export class UpdateLPTokenPrice extends ethereum.Event {
+  get params(): UpdateLPTokenPrice__Params {
+    return new UpdateLPTokenPrice__Params(this);
+  }
+}
+
+export class UpdateLPTokenPrice__Params {
+  _event: UpdateLPTokenPrice;
+
+  constructor(event: UpdateLPTokenPrice) {
+    this._event = event;
+  }
+
+  get lpToken(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newPrice(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
 export class Vault__marketConfigurationResultValue0Struct extends ethereum.Tuple {
-  get paused(): boolean {
+  get frozen(): boolean {
     return this[0].toBoolean();
   }
 
@@ -266,11 +452,11 @@ export class Vault__openPositionResult {
     return map;
   }
 
-  getValue0(): BigInt {
+  getPositionId(): BigInt {
     return this.value0;
   }
 
-  getValue1(): BigInt {
+  getPremium(): BigInt {
     return this.value1;
   }
 }
@@ -296,6 +482,21 @@ export class Vault__strikeResultSStruct extends ethereum.Tuple {
 export class Vault extends ethereum.SmartContract {
   static bind(address: Address): Vault {
     return new Vault("Vault", address);
+  }
+
+  KEEPER_FEE(): BigInt {
+    let result = super.call("KEEPER_FEE", "KEEPER_FEE():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_KEEPER_FEE(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("KEEPER_FEE", "KEEPER_FEE():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   MAXIMUM_CALL_STRIKE_PRICE_RATIO(): BigInt {
@@ -459,20 +660,16 @@ export class Vault extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  PREMIUM_UPSCALE_RATIO(): BigInt {
-    let result = super.call(
-      "PREMIUM_UPSCALE_RATIO",
-      "PREMIUM_UPSCALE_RATIO():(uint256)",
-      []
-    );
+  RESERVE_RATIO(): BigInt {
+    let result = super.call("RESERVE_RATIO", "RESERVE_RATIO():(uint256)", []);
 
     return result[0].toBigInt();
   }
 
-  try_PREMIUM_UPSCALE_RATIO(): ethereum.CallResult<BigInt> {
+  try_RESERVE_RATIO(): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "PREMIUM_UPSCALE_RATIO",
-      "PREMIUM_UPSCALE_RATIO():(uint256)",
+      "RESERVE_RATIO",
+      "RESERVE_RATIO():(uint256)",
       []
     );
     if (result.reverted) {
@@ -549,13 +746,27 @@ export class Vault extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  closePosition(collection: Address, to: Address, positionId: BigInt): BigInt {
+  backstopPool(): Address {
+    let result = super.call("backstopPool", "backstopPool():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_backstopPool(): ethereum.CallResult<Address> {
+    let result = super.tryCall("backstopPool", "backstopPool():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  closePosition(collection: Address, positionId: BigInt): BigInt {
     let result = super.call(
       "closePosition",
-      "closePosition(address,address,uint256):(uint256)",
+      "closePosition(address,uint256):(uint256)",
       [
         ethereum.Value.fromAddress(collection),
-        ethereum.Value.fromAddress(to),
         ethereum.Value.fromUnsignedBigInt(positionId)
       ]
     );
@@ -565,15 +776,13 @@ export class Vault extends ethereum.SmartContract {
 
   try_closePosition(
     collection: Address,
-    to: Address,
     positionId: BigInt
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "closePosition",
-      "closePosition(address,address,uint256):(uint256)",
+      "closePosition(address,uint256):(uint256)",
       [
         ethereum.Value.fromAddress(collection),
-        ethereum.Value.fromAddress(to),
         ethereum.Value.fromUnsignedBigInt(positionId)
       ]
     );
@@ -582,6 +791,144 @@ export class Vault extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  estimatePremium(
+    collection: Address,
+    optionType: i32,
+    strikePrice: BigInt,
+    expiry: BigInt,
+    amount: BigInt
+  ): BigInt {
+    let result = super.call(
+      "estimatePremium",
+      "estimatePremium(address,uint8,uint256,uint256,uint256):(uint256)",
+      [
+        ethereum.Value.fromAddress(collection),
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(optionType)),
+        ethereum.Value.fromUnsignedBigInt(strikePrice),
+        ethereum.Value.fromUnsignedBigInt(expiry),
+        ethereum.Value.fromUnsignedBigInt(amount)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_estimatePremium(
+    collection: Address,
+    optionType: i32,
+    strikePrice: BigInt,
+    expiry: BigInt,
+    amount: BigInt
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "estimatePremium",
+      "estimatePremium(address,uint8,uint256,uint256,uint256):(uint256)",
+      [
+        ethereum.Value.fromAddress(collection),
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(optionType)),
+        ethereum.Value.fromUnsignedBigInt(strikePrice),
+        ethereum.Value.fromUnsignedBigInt(expiry),
+        ethereum.Value.fromUnsignedBigInt(amount)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  feeRatio(): BigInt {
+    let result = super.call("feeRatio", "feeRatio():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_feeRatio(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("feeRatio", "feeRatio():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  isActiveMarket(collection: Address): boolean {
+    let result = super.call(
+      "isActiveMarket",
+      "isActiveMarket(address):(bool)",
+      [ethereum.Value.fromAddress(collection)]
+    );
+
+    return result[0].toBoolean();
+  }
+
+  try_isActiveMarket(collection: Address): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "isActiveMarket",
+      "isActiveMarket(address):(bool)",
+      [ethereum.Value.fromAddress(collection)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  isFrozenMarket(collection: Address): boolean {
+    let result = super.call(
+      "isFrozenMarket",
+      "isFrozenMarket(address):(bool)",
+      [ethereum.Value.fromAddress(collection)]
+    );
+
+    return result[0].toBoolean();
+  }
+
+  try_isFrozenMarket(collection: Address): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "isFrozenMarket",
+      "isFrozenMarket(address):(bool)",
+      [ethereum.Value.fromAddress(collection)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  isPaused(): boolean {
+    let result = super.call("isPaused", "isPaused():(bool)", []);
+
+    return result[0].toBoolean();
+  }
+
+  try_isPaused(): ethereum.CallResult<boolean> {
+    let result = super.tryCall("isPaused", "isPaused():(bool)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  keeper(): Address {
+    let result = super.call("keeper", "keeper():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_keeper(): ethereum.CallResult<Address> {
+    let result = super.tryCall("keeper", "keeper():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   marketConfiguration(
@@ -670,18 +1017,20 @@ export class Vault extends ethereum.SmartContract {
     optionType: i32,
     strikePrice: BigInt,
     expiry: BigInt,
-    amount: BigInt
+    amount: BigInt,
+    maximumPremium: BigInt
   ): Vault__openPositionResult {
     let result = super.call(
       "openPosition",
-      "openPosition(address,address,uint8,uint256,uint256,uint256):(uint256,uint256)",
+      "openPosition(address,address,uint8,uint256,uint256,uint256,uint256):(uint256,uint256)",
       [
         ethereum.Value.fromAddress(collection),
         ethereum.Value.fromAddress(onBehalfOf),
         ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(optionType)),
         ethereum.Value.fromUnsignedBigInt(strikePrice),
         ethereum.Value.fromUnsignedBigInt(expiry),
-        ethereum.Value.fromUnsignedBigInt(amount)
+        ethereum.Value.fromUnsignedBigInt(amount),
+        ethereum.Value.fromUnsignedBigInt(maximumPremium)
       ]
     );
 
@@ -697,18 +1046,20 @@ export class Vault extends ethereum.SmartContract {
     optionType: i32,
     strikePrice: BigInt,
     expiry: BigInt,
-    amount: BigInt
+    amount: BigInt,
+    maximumPremium: BigInt
   ): ethereum.CallResult<Vault__openPositionResult> {
     let result = super.tryCall(
       "openPosition",
-      "openPosition(address,address,uint8,uint256,uint256,uint256):(uint256,uint256)",
+      "openPosition(address,address,uint8,uint256,uint256,uint256,uint256):(uint256,uint256)",
       [
         ethereum.Value.fromAddress(collection),
         ethereum.Value.fromAddress(onBehalfOf),
         ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(optionType)),
         ethereum.Value.fromUnsignedBigInt(strikePrice),
         ethereum.Value.fromUnsignedBigInt(expiry),
-        ethereum.Value.fromUnsignedBigInt(amount)
+        ethereum.Value.fromUnsignedBigInt(amount),
+        ethereum.Value.fromUnsignedBigInt(maximumPremium)
       ]
     );
     if (result.reverted) {
@@ -748,6 +1099,25 @@ export class Vault extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  profitFeeRatio(): BigInt {
+    let result = super.call("profitFeeRatio", "profitFeeRatio():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_profitFeeRatio(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "profitFeeRatio",
+      "profitFeeRatio():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   reserve(): Address {
@@ -957,12 +1327,46 @@ export class ConstructorCall__Inputs {
   get reserve_(): Address {
     return this._call.inputValues[5].value.toAddress();
   }
+
+  get backstopPool_(): Address {
+    return this._call.inputValues[6].value.toAddress();
+  }
 }
 
 export class ConstructorCall__Outputs {
   _call: ConstructorCall;
 
   constructor(call: ConstructorCall) {
+    this._call = call;
+  }
+}
+
+export class ActivateMarketCall extends ethereum.Call {
+  get inputs(): ActivateMarketCall__Inputs {
+    return new ActivateMarketCall__Inputs(this);
+  }
+
+  get outputs(): ActivateMarketCall__Outputs {
+    return new ActivateMarketCall__Outputs(this);
+  }
+}
+
+export class ActivateMarketCall__Inputs {
+  _call: ActivateMarketCall;
+
+  constructor(call: ActivateMarketCall) {
+    this._call = call;
+  }
+
+  get collection(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class ActivateMarketCall__Outputs {
+  _call: ActivateMarketCall;
+
+  constructor(call: ActivateMarketCall) {
     this._call = call;
   }
 }
@@ -1047,36 +1451,6 @@ export class AddMarketCall__Outputs {
   }
 }
 
-export class ClaimLPTokenCall extends ethereum.Call {
-  get inputs(): ClaimLPTokenCall__Inputs {
-    return new ClaimLPTokenCall__Inputs(this);
-  }
-
-  get outputs(): ClaimLPTokenCall__Outputs {
-    return new ClaimLPTokenCall__Outputs(this);
-  }
-}
-
-export class ClaimLPTokenCall__Inputs {
-  _call: ClaimLPTokenCall;
-
-  constructor(call: ClaimLPTokenCall) {
-    this._call = call;
-  }
-
-  get user(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class ClaimLPTokenCall__Outputs {
-  _call: ClaimLPTokenCall;
-
-  constructor(call: ClaimLPTokenCall) {
-    this._call = call;
-  }
-}
-
 export class ClosePositionCall extends ethereum.Call {
   get inputs(): ClosePositionCall__Inputs {
     return new ClosePositionCall__Inputs(this);
@@ -1098,12 +1472,8 @@ export class ClosePositionCall__Inputs {
     return this._call.inputValues[0].value.toAddress();
   }
 
-  get to(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
   get positionId(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
+    return this._call.inputValues[1].value.toBigInt();
   }
 }
 
@@ -1116,6 +1486,66 @@ export class ClosePositionCall__Outputs {
 
   get profit(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
+  }
+}
+
+export class DeactivateMarketCall extends ethereum.Call {
+  get inputs(): DeactivateMarketCall__Inputs {
+    return new DeactivateMarketCall__Inputs(this);
+  }
+
+  get outputs(): DeactivateMarketCall__Outputs {
+    return new DeactivateMarketCall__Outputs(this);
+  }
+}
+
+export class DeactivateMarketCall__Inputs {
+  _call: DeactivateMarketCall;
+
+  constructor(call: DeactivateMarketCall) {
+    this._call = call;
+  }
+
+  get collection(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class DeactivateMarketCall__Outputs {
+  _call: DeactivateMarketCall;
+
+  constructor(call: DeactivateMarketCall) {
+    this._call = call;
+  }
+}
+
+export class DefreezeMarketCall extends ethereum.Call {
+  get inputs(): DefreezeMarketCall__Inputs {
+    return new DefreezeMarketCall__Inputs(this);
+  }
+
+  get outputs(): DefreezeMarketCall__Outputs {
+    return new DefreezeMarketCall__Outputs(this);
+  }
+}
+
+export class DefreezeMarketCall__Inputs {
+  _call: DefreezeMarketCall;
+
+  constructor(call: DefreezeMarketCall) {
+    this._call = call;
+  }
+
+  get collection(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class DefreezeMarketCall__Outputs {
+  _call: DefreezeMarketCall;
+
+  constructor(call: DefreezeMarketCall) {
+    this._call = call;
   }
 }
 
@@ -1187,6 +1617,36 @@ export class ForceClosePendingPositionCall__Outputs {
   }
 }
 
+export class FreezeMarketCall extends ethereum.Call {
+  get inputs(): FreezeMarketCall__Inputs {
+    return new FreezeMarketCall__Inputs(this);
+  }
+
+  get outputs(): FreezeMarketCall__Outputs {
+    return new FreezeMarketCall__Outputs(this);
+  }
+}
+
+export class FreezeMarketCall__Inputs {
+  _call: FreezeMarketCall;
+
+  constructor(call: FreezeMarketCall) {
+    this._call = call;
+  }
+
+  get collection(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class FreezeMarketCall__Outputs {
+  _call: FreezeMarketCall;
+
+  constructor(call: FreezeMarketCall) {
+    this._call = call;
+  }
+}
+
 export class OpenPositionCall extends ethereum.Call {
   get inputs(): OpenPositionCall__Inputs {
     return new OpenPositionCall__Inputs(this);
@@ -1227,6 +1687,10 @@ export class OpenPositionCall__Inputs {
   get amount(): BigInt {
     return this._call.inputValues[5].value.toBigInt();
   }
+
+  get maximumPremium(): BigInt {
+    return this._call.inputValues[6].value.toBigInt();
+  }
 }
 
 export class OpenPositionCall__Outputs {
@@ -1236,12 +1700,38 @@ export class OpenPositionCall__Outputs {
     this._call = call;
   }
 
-  get value0(): BigInt {
+  get positionId(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
   }
 
-  get value1(): BigInt {
+  get premium(): BigInt {
     return this._call.outputValues[1].value.toBigInt();
+  }
+}
+
+export class PauseCall extends ethereum.Call {
+  get inputs(): PauseCall__Inputs {
+    return new PauseCall__Inputs(this);
+  }
+
+  get outputs(): PauseCall__Outputs {
+    return new PauseCall__Outputs(this);
+  }
+}
+
+export class PauseCall__Inputs {
+  _call: PauseCall;
+
+  constructor(call: PauseCall) {
+    this._call = call;
+  }
+}
+
+export class PauseCall__Outputs {
+  _call: PauseCall;
+
+  constructor(call: PauseCall) {
+    this._call = call;
   }
 }
 
@@ -1267,6 +1757,36 @@ export class RenounceOwnershipCall__Outputs {
   _call: RenounceOwnershipCall;
 
   constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class SetKeeperCall extends ethereum.Call {
+  get inputs(): SetKeeperCall__Inputs {
+    return new SetKeeperCall__Inputs(this);
+  }
+
+  get outputs(): SetKeeperCall__Outputs {
+    return new SetKeeperCall__Outputs(this);
+  }
+}
+
+export class SetKeeperCall__Inputs {
+  _call: SetKeeperCall;
+
+  constructor(call: SetKeeperCall) {
+    this._call = call;
+  }
+
+  get keeperAddress(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetKeeperCall__Outputs {
+  _call: SetKeeperCall;
+
+  constructor(call: SetKeeperCall) {
     this._call = call;
   }
 }
@@ -1297,6 +1817,32 @@ export class TransferOwnershipCall__Outputs {
   _call: TransferOwnershipCall;
 
   constructor(call: TransferOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class UnpauseCall extends ethereum.Call {
+  get inputs(): UnpauseCall__Inputs {
+    return new UnpauseCall__Inputs(this);
+  }
+
+  get outputs(): UnpauseCall__Outputs {
+    return new UnpauseCall__Outputs(this);
+  }
+}
+
+export class UnpauseCall__Inputs {
+  _call: UnpauseCall;
+
+  constructor(call: UnpauseCall) {
+    this._call = call;
+  }
+}
+
+export class UnpauseCall__Outputs {
+  _call: UnpauseCall;
+
+  constructor(call: UnpauseCall) {
     this._call = call;
   }
 }

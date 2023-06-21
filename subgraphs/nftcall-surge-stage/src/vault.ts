@@ -1,24 +1,39 @@
 import {
+  ActivateMarket as ActivateMarketEvent,
   CreateMarket as CreateMarketEvent,
   CreateStrike as CreateStrikeEvent,
+  DeactivateMarket as DeactivateMarketEvent,
+  DefreezeMarket as DefreezeMarketEvent,
   DestoryStrike as DestoryStrikeEvent,
-  OpenPosition as OpenPositionEvent,
-  OwnershipTransferred as OwnershipTransferredEvent,
+  FreezeMarket as FreezeMarketEvent,
+  KeeperAddressUpdated as KeeperAddressUpdatedEvent,
+  PauseVault as PauseVaultEvent,
   Paused as PausedEvent,
+  ReceiveKeeperFee as ReceiveKeeperFeeEvent,
   ReceivePremium as ReceivePremiumEvent,
   SendRevenue as SendRevenueEvent,
+  UnpauseVault as UnpauseVaultEvent,
   Unpaused as UnpausedEvent,
+  UpdateLPTokenPrice as UpdateLPTokenPriceEvent,
 } from "../generated/Vault/Vault";
 import {
   CreateMarket,
   CreateStrike,
   DestoryStrike,
-  OpenPosition,
-  OwnershipTransferred,
+  OptionStrike,
   Paused,
   ReceivePremium,
   SendRevenue,
   Unpaused,
+  ActivateMarket,
+  DeactivateMarket,
+  DefreezeMarket,
+  FreezeMarket,
+  KeeperAddressUpdated,
+  PauseVault,
+  ReceiveKeeperFee,
+  UnpauseVault,
+  UpdateLPTokenPrice,
 } from "../generated/schema";
 
 export function handleCreateMarket(event: CreateMarketEvent): void {
@@ -51,6 +66,19 @@ export function handleCreateStrike(event: CreateStrikeEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+
+  let strikeEntity = new OptionStrike(event.params.strikeId.toHexString());
+
+  strikeEntity.createTimestamp = event.block.timestamp.toI32();
+  strikeEntity.updateTimestamp = event.block.timestamp.toI32();
+
+  strikeEntity.duration = event.params.duration;
+  strikeEntity.expiration = event.params.expiration;
+  strikeEntity.spotPrice = event.params.spotPrice;
+  strikeEntity.strikePrice = event.params.strikePrice;
+  strikeEntity.enabled = true;
+
+  strikeEntity.save();
 }
 
 export function handleDestoryStrike(event: DestoryStrikeEvent): void {
@@ -64,38 +92,13 @@ export function handleDestoryStrike(event: DestoryStrikeEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
-}
 
-export function handleOpenPosition(event: OpenPositionEvent): void {
-  let entity = new OpenPosition(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  );
-  entity.collection = event.params.collection;
-  entity.strikeId = event.params.strikeId;
-  entity.positionId = event.params.positionId;
-  entity.estimatedPremium = event.params.estimatedPremium;
-
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
-
-  entity.save();
-}
-
-export function handleOwnershipTransferred(
-  event: OwnershipTransferredEvent
-): void {
-  let entity = new OwnershipTransferred(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  );
-  entity.previousOwner = event.params.previousOwner;
-  entity.newOwner = event.params.newOwner;
-
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
-
-  entity.save();
+  let strikeEntity = OptionStrike.load(event.params.strikeId.toHexString());
+  if (strikeEntity) {
+    strikeEntity.enabled = false;
+    strikeEntity.updateTimestamp = event.block.timestamp.toI32();
+    strikeEntity.save();
+  }
 }
 
 export function handlePaused(event: PausedEvent): void {
@@ -146,6 +149,131 @@ export function handleUnpaused(event: UnpausedEvent): void {
     event.transaction.hash.concatI32(event.logIndex.toI32())
   );
   entity.account = event.params.account;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+}
+
+export function handleActivateMarket(event: ActivateMarketEvent): void {
+  let entity = new ActivateMarket(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.operator = event.params.operator;
+  entity.collection = event.params.collection;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+}
+
+export function handleDeactivateMarket(event: DeactivateMarketEvent): void {
+  let entity = new DeactivateMarket(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.operator = event.params.operator;
+  entity.collection = event.params.collection;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+}
+
+export function handleDefreezeMarket(event: DefreezeMarketEvent): void {
+  let entity = new DefreezeMarket(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.operator = event.params.operator;
+  entity.collection = event.params.collection;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+}
+
+export function handleFreezeMarket(event: FreezeMarketEvent): void {
+  let entity = new FreezeMarket(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.operator = event.params.operator;
+  entity.collection = event.params.collection;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+}
+
+export function handleKeeperAddressUpdated(
+  event: KeeperAddressUpdatedEvent
+): void {
+  let entity = new KeeperAddressUpdated(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.keeperAddress = event.params.keeperAddress;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+}
+
+export function handlePauseVault(event: PauseVaultEvent): void {
+  let entity = new PauseVault(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.operator = event.params.operator;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+}
+
+export function handleReceiveKeeperFee(event: ReceiveKeeperFeeEvent): void {
+  let entity = new ReceiveKeeperFee(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.user = event.params.user;
+  entity.amount = event.params.amount;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+}
+
+export function handleUnpauseVault(event: UnpauseVaultEvent): void {
+  let entity = new UnpauseVault(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.operator = event.params.operator;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+}
+
+export function handleUpdateLPTokenPrice(event: UpdateLPTokenPriceEvent): void {
+  let entity = new UpdateLPTokenPrice(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.lpToken = event.params.lpToken;
+  entity.newPrice = event.params.newPrice;
 
   entity.blockNumber = event.block.number;
   entity.blockTimestamp = event.block.timestamp;
