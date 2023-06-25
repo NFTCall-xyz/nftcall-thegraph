@@ -11,29 +11,35 @@ import {
   Paused as PausedEvent,
   ReceiveKeeperFee as ReceiveKeeperFeeEvent,
   ReceivePremium as ReceivePremiumEvent,
+  ReceivePremiumAndFee as ReceivePremiumAndFeeEvent,
+  ReturnExcessPremium as ReturnExcessPremiumEvent,
   SendRevenue as SendRevenueEvent,
   UnpauseVault as UnpauseVaultEvent,
   Unpaused as UnpausedEvent,
   UpdateLPTokenPrice as UpdateLPTokenPriceEvent,
+  UserCancelPosition as UserCancelPositionEvent,
 } from "../generated/Vault/Vault";
 import {
+  ActivateMarket,
   CreateMarket,
   CreateStrike,
-  DestoryStrike,
-  OptionStrike,
-  Paused,
-  ReceivePremium,
-  SendRevenue,
-  Unpaused,
-  ActivateMarket,
   DeactivateMarket,
   DefreezeMarket,
+  DestoryStrike,
   FreezeMarket,
   KeeperAddressUpdated,
+  OptionStrike,
   PauseVault,
+  Paused,
   ReceiveKeeperFee,
+  ReceivePremium,
+  ReceivePremiumAndFee,
+  ReturnExcessPremium,
+  SendRevenue,
   UnpauseVault,
+  Unpaused,
   UpdateLPTokenPrice,
+  UserCancelPosition,
 } from "../generated/schema";
 
 export function handleCreateMarket(event: CreateMarketEvent): void {
@@ -274,6 +280,53 @@ export function handleUpdateLPTokenPrice(event: UpdateLPTokenPriceEvent): void {
   );
   entity.lpToken = event.params.lpToken;
   entity.newPrice = event.params.newPrice;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+}
+
+export function handleReceivePremiumAndFee(
+  event: ReceivePremiumAndFeeEvent
+): void {
+  let entity = new ReceivePremiumAndFee(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.user = event.params.user;
+  entity.premium = event.params.premium;
+  entity.fee = event.params.fee;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+}
+
+export function handleReturnExcessPremium(
+  event: ReturnExcessPremiumEvent
+): void {
+  let entity = new ReturnExcessPremium(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.user = event.params.user;
+  entity.returnedPremium = event.params.returnedPremium;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+}
+
+export function handleUserCancelPosition(event: UserCancelPositionEvent): void {
+  let entity = new UserCancelPosition(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.user = event.params.user;
+  entity.positionId = event.params.positionId;
 
   entity.blockNumber = event.block.number;
   entity.blockTimestamp = event.block.timestamp;

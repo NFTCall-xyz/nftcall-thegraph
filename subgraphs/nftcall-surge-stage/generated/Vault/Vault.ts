@@ -330,6 +330,54 @@ export class ReceivePremium__Params {
   }
 }
 
+export class ReceivePremiumAndFee extends ethereum.Event {
+  get params(): ReceivePremiumAndFee__Params {
+    return new ReceivePremiumAndFee__Params(this);
+  }
+}
+
+export class ReceivePremiumAndFee__Params {
+  _event: ReceivePremiumAndFee;
+
+  constructor(event: ReceivePremiumAndFee) {
+    this._event = event;
+  }
+
+  get user(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get premium(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get fee(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+}
+
+export class ReturnExcessPremium extends ethereum.Event {
+  get params(): ReturnExcessPremium__Params {
+    return new ReturnExcessPremium__Params(this);
+  }
+}
+
+export class ReturnExcessPremium__Params {
+  _event: ReturnExcessPremium;
+
+  constructor(event: ReturnExcessPremium) {
+    this._event = event;
+  }
+
+  get user(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get returnedPremium(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
 export class SendRevenue extends ethereum.Event {
   get params(): SendRevenue__Params {
     return new SendRevenue__Params(this);
@@ -410,6 +458,28 @@ export class UpdateLPTokenPrice__Params {
   }
 
   get newPrice(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
+export class UserCancelPosition extends ethereum.Event {
+  get params(): UserCancelPosition__Params {
+    return new UserCancelPosition__Params(this);
+  }
+}
+
+export class UserCancelPosition__Params {
+  _event: UserCancelPosition;
+
+  constructor(event: UserCancelPosition) {
+    this._event = event;
+  }
+
+  get user(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get positionId(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
 }
