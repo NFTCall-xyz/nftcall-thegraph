@@ -7,6 +7,30 @@ type ActivateMarket @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
+type ActivatePosition @entity(immutable: true) {
+  id: Bytes!
+  owner: Bytes! # address
+  collection: Bytes! # address
+  positionId: BigInt! # uint256
+  premium: BigInt! # uint256
+  excessPremium: BigInt! # uint256
+  delta: BigInt! # int256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CancelPosition @entity(immutable: true) {
+  id: Bytes!
+  owner: Bytes! # address
+  collection: Bytes! # address
+  positionId: BigInt! # uint256
+  returnedPremium: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
 type CreateMarket @entity(immutable: true) {
   id: Bytes!
   collection: Bytes! # address
@@ -22,7 +46,7 @@ type CreateStrike @entity(immutable: true) {
   strikeId: BigInt! # uint256
   duration: BigInt! # uint256
   expiration: BigInt! # uint256
-  spotPrice: BigInt! # uint256
+  entryPrice: BigInt! # uint256
   strikePrice: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
@@ -55,6 +79,41 @@ type DestoryStrike @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
+type ExercisePosition @entity(immutable: true) {
+  id: Bytes!
+  owner: Bytes! # address
+  collection: Bytes! # address
+  positionId: BigInt! # uint256
+  revenue: BigInt! # uint256
+  exerciseFee: BigInt! # uint256
+  settlementPrice: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ExpirePosition @entity(immutable: true) {
+  id: Bytes!
+  owner: Bytes! # address
+  collection: Bytes! # address
+  positionId: BigInt! # uint256
+  settlementPrice: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FailPosition @entity(immutable: true) {
+  id: Bytes!
+  owner: Bytes! # address
+  collection: Bytes! # address
+  positionId: BigInt! # uint256
+  returnedPremium: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
 type FreezeMarket @entity(immutable: true) {
   id: Bytes!
   operator: Bytes! # address
@@ -67,6 +126,24 @@ type FreezeMarket @entity(immutable: true) {
 type KeeperAddressUpdated @entity(immutable: true) {
   id: Bytes!
   keeperAddress: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type OpenPosition @entity(immutable: true) {
+  id: Bytes!
+  caller: Bytes! # address
+  receiver: Bytes! # address
+  collection: Bytes! # address
+  positionId: BigInt! # uint256
+  parameters_optionType: Int! # uint8
+  parameters_expiration: BigInt! # uint256
+  parameters_entryPrice: BigInt! # uint256
+  parameters_strikePrice: BigInt! # uint256
+  parameters_amount: BigInt! # uint256
+  parameters_premium: BigInt! # uint256
+  parameters_keeperFee: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -97,35 +174,6 @@ type Paused @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type ReceiveKeeperFee @entity(immutable: true) {
-  id: Bytes!
-  user: Bytes! # address
-  amount: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type ReceivePremium @entity(immutable: true) {
-  id: Bytes!
-  user: Bytes! # address
-  amountToReserve: BigInt! # uint256
-  amountToLiquidityPool: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type SendRevenue @entity(immutable: true) {
-  id: Bytes!
-  receiver: Bytes! # address
-  amount: BigInt! # uint256
-  fee: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
 type UnpauseVault @entity(immutable: true) {
   id: Bytes!
   operator: Bytes! # address
@@ -151,129 +199,6 @@ type UpdateLPTokenPrice @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type ReceivePremiumAndFee @entity(immutable: true) {
-  id: Bytes!
-  user: Bytes! # address
-  premium: BigInt! # uint256
-  fee: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type ReturnExcessPremium @entity(immutable: true) {
-  id: Bytes!
-  user: Bytes! # address
-  returnedPremium: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type UserCancelPosition @entity(immutable: true) {
-  id: Bytes!
-  user: Bytes! # address
-  positionId: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type ActivePosition @entity(immutable: true) {
-  id: Bytes!
-  positionId: BigInt! # uint256
-  premium: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type Approval @entity(immutable: true) {
-  id: Bytes!
-  owner: Bytes! # address
-  approved: Bytes! # address
-  tokenId: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type ApprovalForAll @entity(immutable: true) {
-  id: Bytes!
-  owner: Bytes! # address
-  operator: Bytes! # address
-  approved: Boolean! # bool
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type ClosePosition @entity(immutable: true) {
-  id: Bytes!
-  positionId: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type ForceClosePosition @entity(immutable: true) {
-  id: Bytes!
-  positionId: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type Initialize @entity(immutable: true) {
-  id: Bytes!
-  vault: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type OpenPosition @entity(immutable: true) {
-  id: Bytes!
-  to: Bytes! # address
-  positionId: BigInt! # uint256
-  optionType: Int! # uint8
-  strikeId: BigInt! # uint256
-  amount: BigInt! # uint256
-  maximumPremium: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type Transfer @entity(immutable: true) {
-  id: Bytes!
-  from: Bytes! # address
-  to: Bytes! # address
-  tokenId: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type UpdateBaseURI @entity(immutable: true) {
-  id: Bytes!
-  baseURI: String! # string
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type OptionStrike @entity {
-  id: ID!
-  enabled: Boolean! # bool
-  duration: BigInt! # uint256
-  expiration: BigInt! # uint256
-  spotPrice: BigInt! # uint256
-  strikePrice: BigInt! # uint256
-  updateTimestamp: Int!
-  createTimestamp: Int!
-}
-
 enum OptionPositionStatus {
   Pending
   Active
@@ -286,14 +211,23 @@ enum OptionPositionStatus {
 type OptionPosition @entity {
   id: ID!
   status: OptionPositionStatus!
-  premium: BigInt! # uint256
-  maximumPremium: BigInt! # uint256
-  userAddress: Bytes! # address
-  nftAddress: Bytes! # address
+  receiverAddress: Bytes! # address
+  callerAddress: Bytes! # address
+  collectionAddress: Bytes! # address
   positionId: BigInt! # uint256
   optionType: Int! # uint8
-  strikeId: OptionStrike!
+  expiration: BigInt! # uint256
+  entryPrice: BigInt! # uint256
+  strikePrice: BigInt! # uint256
+  delta: BigInt! # int256
+  settlementPrice: BigInt! # uint256
   amount: BigInt! # uint256
+  premium: BigInt! # uint256
+  excessPremium: BigInt! # uint256
+  returnedPremium: BigInt! # uint256
+  keeperFee: BigInt! # uint256
+  revenue: BigInt! # uint256
+  exerciseFee: BigInt! # uint256
   updateTimestamp: Int!
   createTimestamp: Int!
 }

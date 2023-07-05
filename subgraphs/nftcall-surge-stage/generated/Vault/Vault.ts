@@ -32,6 +32,74 @@ export class ActivateMarket__Params {
   }
 }
 
+export class ActivatePosition extends ethereum.Event {
+  get params(): ActivatePosition__Params {
+    return new ActivatePosition__Params(this);
+  }
+}
+
+export class ActivatePosition__Params {
+  _event: ActivatePosition;
+
+  constructor(event: ActivatePosition) {
+    this._event = event;
+  }
+
+  get owner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get collection(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get positionId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get premium(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+
+  get excessPremium(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
+  }
+
+  get delta(): BigInt {
+    return this._event.parameters[5].value.toBigInt();
+  }
+}
+
+export class CancelPosition extends ethereum.Event {
+  get params(): CancelPosition__Params {
+    return new CancelPosition__Params(this);
+  }
+}
+
+export class CancelPosition__Params {
+  _event: CancelPosition;
+
+  constructor(event: CancelPosition) {
+    this._event = event;
+  }
+
+  get owner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get collection(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get positionId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get returnedPremium(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+}
+
 export class CreateMarket extends ethereum.Event {
   get params(): CreateMarket__Params {
     return new CreateMarket__Params(this);
@@ -83,7 +151,7 @@ export class CreateStrike__Params {
     return this._event.parameters[2].value.toBigInt();
   }
 
-  get spotPrice(): BigInt {
+  get entryPrice(): BigInt {
     return this._event.parameters[3].value.toBigInt();
   }
 
@@ -154,6 +222,104 @@ export class DestoryStrike__Params {
   }
 }
 
+export class ExercisePosition extends ethereum.Event {
+  get params(): ExercisePosition__Params {
+    return new ExercisePosition__Params(this);
+  }
+}
+
+export class ExercisePosition__Params {
+  _event: ExercisePosition;
+
+  constructor(event: ExercisePosition) {
+    this._event = event;
+  }
+
+  get owner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get collection(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get positionId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get revenue(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+
+  get exerciseFee(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
+  }
+
+  get settlementPrice(): BigInt {
+    return this._event.parameters[5].value.toBigInt();
+  }
+}
+
+export class ExpirePosition extends ethereum.Event {
+  get params(): ExpirePosition__Params {
+    return new ExpirePosition__Params(this);
+  }
+}
+
+export class ExpirePosition__Params {
+  _event: ExpirePosition;
+
+  constructor(event: ExpirePosition) {
+    this._event = event;
+  }
+
+  get owner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get collection(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get positionId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get settlementPrice(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+}
+
+export class FailPosition extends ethereum.Event {
+  get params(): FailPosition__Params {
+    return new FailPosition__Params(this);
+  }
+}
+
+export class FailPosition__Params {
+  _event: FailPosition;
+
+  constructor(event: FailPosition) {
+    this._event = event;
+  }
+
+  get owner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get collection(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get positionId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get returnedPremium(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+}
+
 export class FreezeMarket extends ethereum.Event {
   get params(): FreezeMarket__Params {
     return new FreezeMarket__Params(this);
@@ -207,20 +373,56 @@ export class OpenPosition__Params {
     this._event = event;
   }
 
-  get collection(): Address {
+  get caller(): Address {
     return this._event.parameters[0].value.toAddress();
   }
 
-  get strikeId(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+  get receiver(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get collection(): Address {
+    return this._event.parameters[2].value.toAddress();
   }
 
   get positionId(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
+    return this._event.parameters[3].value.toBigInt();
   }
 
-  get estimatedPremium(): BigInt {
-    return this._event.parameters[3].value.toBigInt();
+  get parameters(): OpenPositionParametersStruct {
+    return changetype<OpenPositionParametersStruct>(
+      this._event.parameters[4].value.toTuple()
+    );
+  }
+}
+
+export class OpenPositionParametersStruct extends ethereum.Tuple {
+  get optionType(): i32 {
+    return this[0].toI32();
+  }
+
+  get expiration(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get entryPrice(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get strikePrice(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get amount(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get premium(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get keeperFee(): BigInt {
+    return this[6].toBigInt();
   }
 }
 
@@ -282,128 +484,6 @@ export class Paused__Params {
   }
 }
 
-export class ReceiveKeeperFee extends ethereum.Event {
-  get params(): ReceiveKeeperFee__Params {
-    return new ReceiveKeeperFee__Params(this);
-  }
-}
-
-export class ReceiveKeeperFee__Params {
-  _event: ReceiveKeeperFee;
-
-  constructor(event: ReceiveKeeperFee) {
-    this._event = event;
-  }
-
-  get user(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get amount(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
-  }
-}
-
-export class ReceivePremium extends ethereum.Event {
-  get params(): ReceivePremium__Params {
-    return new ReceivePremium__Params(this);
-  }
-}
-
-export class ReceivePremium__Params {
-  _event: ReceivePremium;
-
-  constructor(event: ReceivePremium) {
-    this._event = event;
-  }
-
-  get user(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get amountToReserve(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
-  }
-
-  get amountToLiquidityPool(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-}
-
-export class ReceivePremiumAndFee extends ethereum.Event {
-  get params(): ReceivePremiumAndFee__Params {
-    return new ReceivePremiumAndFee__Params(this);
-  }
-}
-
-export class ReceivePremiumAndFee__Params {
-  _event: ReceivePremiumAndFee;
-
-  constructor(event: ReceivePremiumAndFee) {
-    this._event = event;
-  }
-
-  get user(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get premium(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
-  }
-
-  get fee(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-}
-
-export class ReturnExcessPremium extends ethereum.Event {
-  get params(): ReturnExcessPremium__Params {
-    return new ReturnExcessPremium__Params(this);
-  }
-}
-
-export class ReturnExcessPremium__Params {
-  _event: ReturnExcessPremium;
-
-  constructor(event: ReturnExcessPremium) {
-    this._event = event;
-  }
-
-  get user(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get returnedPremium(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
-  }
-}
-
-export class SendRevenue extends ethereum.Event {
-  get params(): SendRevenue__Params {
-    return new SendRevenue__Params(this);
-  }
-}
-
-export class SendRevenue__Params {
-  _event: SendRevenue;
-
-  constructor(event: SendRevenue) {
-    this._event = event;
-  }
-
-  get receiver(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get amount(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
-  }
-
-  get fee(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-}
-
 export class UnpauseVault extends ethereum.Event {
   get params(): UnpauseVault__Params {
     return new UnpauseVault__Params(this);
@@ -462,25 +542,28 @@ export class UpdateLPTokenPrice__Params {
   }
 }
 
-export class UserCancelPosition extends ethereum.Event {
-  get params(): UserCancelPosition__Params {
-    return new UserCancelPosition__Params(this);
-  }
-}
+export class Vault__activePositionResult {
+  value0: BigInt;
+  value1: BigInt;
 
-export class UserCancelPosition__Params {
-  _event: UserCancelPosition;
-
-  constructor(event: UserCancelPosition) {
-    this._event = event;
+  constructor(value0: BigInt, value1: BigInt) {
+    this.value0 = value0;
+    this.value1 = value1;
   }
 
-  get user(): Address {
-    return this._event.parameters[0].value.toAddress();
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
+    map.set("value1", ethereum.Value.fromSignedBigInt(this.value1));
+    return map;
   }
 
-  get positionId(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+  getPremium(): BigInt {
+    return this.value0;
+  }
+
+  getDelta(): BigInt {
+    return this.value1;
   }
 }
 
@@ -531,8 +614,33 @@ export class Vault__openPositionResult {
   }
 }
 
+export class Vault__positionPNLWeightedDeltaResult {
+  value0: BigInt;
+  value1: BigInt;
+
+  constructor(value0: BigInt, value1: BigInt) {
+    this.value0 = value0;
+    this.value1 = value1;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromSignedBigInt(this.value0));
+    map.set("value1", ethereum.Value.fromSignedBigInt(this.value1));
+    return map;
+  }
+
+  getUnrealizePNL(): BigInt {
+    return this.value0;
+  }
+
+  getWeightedDelta(): BigInt {
+    return this.value1;
+  }
+}
+
 export class Vault__strikeResultSStruct extends ethereum.Tuple {
-  get spotPrice(): BigInt {
+  get entryPrice(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -749,26 +857,32 @@ export class Vault extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  activePosition(collection: Address, positionId: BigInt): BigInt {
+  activePosition(
+    collection: Address,
+    positionId: BigInt
+  ): Vault__activePositionResult {
     let result = super.call(
       "activePosition",
-      "activePosition(address,uint256):(uint256)",
+      "activePosition(address,uint256):(uint256,int256)",
       [
         ethereum.Value.fromAddress(collection),
         ethereum.Value.fromUnsignedBigInt(positionId)
       ]
     );
 
-    return result[0].toBigInt();
+    return new Vault__activePositionResult(
+      result[0].toBigInt(),
+      result[1].toBigInt()
+    );
   }
 
   try_activePosition(
     collection: Address,
     positionId: BigInt
-  ): ethereum.CallResult<BigInt> {
+  ): ethereum.CallResult<Vault__activePositionResult> {
     let result = super.tryCall(
       "activePosition",
-      "activePosition(address,uint256):(uint256)",
+      "activePosition(address,uint256):(uint256,int256)",
       [
         ethereum.Value.fromAddress(collection),
         ethereum.Value.fromUnsignedBigInt(positionId)
@@ -778,7 +892,9 @@ export class Vault extends ethereum.SmartContract {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
+    return ethereum.CallResult.fromValue(
+      new Vault__activePositionResult(value[0].toBigInt(), value[1].toBigInt())
+    );
   }
 
   addMarket(collection: Address, weight: BigInt, optionToken: Address): BigInt {
@@ -1171,6 +1287,49 @@ export class Vault extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
+  positionPNLWeightedDelta(
+    collection: Address,
+    positionId: BigInt
+  ): Vault__positionPNLWeightedDeltaResult {
+    let result = super.call(
+      "positionPNLWeightedDelta",
+      "positionPNLWeightedDelta(address,uint256):(int256,int256)",
+      [
+        ethereum.Value.fromAddress(collection),
+        ethereum.Value.fromUnsignedBigInt(positionId)
+      ]
+    );
+
+    return new Vault__positionPNLWeightedDeltaResult(
+      result[0].toBigInt(),
+      result[1].toBigInt()
+    );
+  }
+
+  try_positionPNLWeightedDelta(
+    collection: Address,
+    positionId: BigInt
+  ): ethereum.CallResult<Vault__positionPNLWeightedDeltaResult> {
+    let result = super.tryCall(
+      "positionPNLWeightedDelta",
+      "positionPNLWeightedDelta(address,uint256):(int256,int256)",
+      [
+        ethereum.Value.fromAddress(collection),
+        ethereum.Value.fromUnsignedBigInt(positionId)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      new Vault__positionPNLWeightedDeltaResult(
+        value[0].toBigInt(),
+        value[1].toBigInt()
+      )
+    );
+  }
+
   profitFeeRatio(): BigInt {
     let result = super.call("profitFeeRatio", "profitFeeRatio():(uint256)", []);
 
@@ -1476,6 +1635,10 @@ export class ActivePositionCall__Outputs {
 
   get premium(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
+  }
+
+  get delta(): BigInt {
+    return this._call.outputValues[1].value.toBigInt();
   }
 }
 
@@ -1913,6 +2076,44 @@ export class UnpauseCall__Outputs {
   _call: UnpauseCall;
 
   constructor(call: UnpauseCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateCollectionRiskCall extends ethereum.Call {
+  get inputs(): UpdateCollectionRiskCall__Inputs {
+    return new UpdateCollectionRiskCall__Inputs(this);
+  }
+
+  get outputs(): UpdateCollectionRiskCall__Outputs {
+    return new UpdateCollectionRiskCall__Outputs(this);
+  }
+}
+
+export class UpdateCollectionRiskCall__Inputs {
+  _call: UpdateCollectionRiskCall;
+
+  constructor(call: UpdateCollectionRiskCall) {
+    this._call = call;
+  }
+
+  get collection(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get delta(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get PNL(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class UpdateCollectionRiskCall__Outputs {
+  _call: UpdateCollectionRiskCall;
+
+  constructor(call: UpdateCollectionRiskCall) {
     this._call = call;
   }
 }

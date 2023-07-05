@@ -6,39 +6,44 @@ dataSources:
     name: Vault
     network: arbitrum-goerli
     source:
-      address: "0x83617208570307cb124cb9e8ad526b49f620c26f"
+      address: "0xfba5c12c5486edd35327255314bd7555abe9a866"
       abi: Vault
-      startBlock: 27005944
+      startBlock: 29145514
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - ActivateMarket
+        - ActivatePosition
+        - CancelPosition
         - CreateMarket
         - CreateStrike
         - DeactivateMarket
         - DefreezeMarket
         - DestoryStrike
+        - ExercisePosition
+        - ExpirePosition
+        - FailPosition
         - FreezeMarket
         - KeeperAddressUpdated
+        - OpenPosition
+        - OwnershipTransferred
         - PauseVault
         - Paused
-        - ReceiveKeeperFee
-        - ReceivePremium
-        - ReceivePremiumAndFee
-        - ReturnExcessPremium
-        - SendRevenue
         - UnpauseVault
         - Unpaused
         - UpdateLPTokenPrice
-        - UserCancelPosition
       abis:
         - name: Vault
           file: ./abis/Vault.json
       eventHandlers:
         - event: ActivateMarket(indexed address,indexed address)
           handler: handleActivateMarket
+        - event: ActivatePosition(indexed address,indexed address,indexed uint256,uint256,uint256,int256)
+          handler: handleActivatePosition
+        - event: CancelPosition(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleCancelPosition
         - event: CreateMarket(indexed address,uint32,address)
           handler: handleCreateMarket
         - event: CreateStrike(indexed uint256,uint256,uint256,uint256,uint256)
@@ -49,119 +54,28 @@ dataSources:
           handler: handleDefreezeMarket
         - event: DestoryStrike(indexed uint256)
           handler: handleDestoryStrike
+        - event: ExercisePosition(indexed address,indexed address,indexed uint256,uint256,uint256,uint256)
+          handler: handleExercisePosition
+        - event: ExpirePosition(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleExpirePosition
+        - event: FailPosition(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleFailPosition
         - event: FreezeMarket(indexed address,indexed address)
           handler: handleFreezeMarket
         - event: KeeperAddressUpdated(indexed address)
           handler: handleKeeperAddressUpdated
+        - event: OpenPosition(address,indexed address,indexed address,indexed uint256,(uint8,uint256,uint256,uint256,uint256,uint256,uint256))
+          handler: handleOpenPosition
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
         - event: PauseVault(indexed address)
           handler: handlePauseVault
         - event: Paused(address)
           handler: handlePaused
-        - event: ReceiveKeeperFee(indexed address,uint256)
-          handler: handleReceiveKeeperFee
-        - event: ReceivePremium(indexed address,uint256,uint256)
-          handler: handleReceivePremium
-        - event: ReceivePremiumAndFee(indexed address,uint256,uint256)
-          handler: handleReceivePremiumAndFee
-        - event: ReturnExcessPremium(indexed address,uint256)
-          handler: handleReturnExcessPremium
-        - event: SendRevenue(indexed address,uint256,uint256)
-          handler: handleSendRevenue
         - event: UnpauseVault(indexed address)
           handler: handleUnpauseVault
         - event: Unpaused(address)
           handler: handleUnpaused
         - event: UpdateLPTokenPrice(indexed address,uint256)
           handler: handleUpdateLPTokenPrice
-        - event: UserCancelPosition(indexed address,indexed uint256)
-          handler: handleUserCancelPosition
       file: ./src/vault.ts
-
-  - kind: ethereum
-    name: OptionToken-BAYC
-    network: arbitrum-goerli
-    source:
-      address: "0xf4ee1D4eDfF91907380FE84959a2923BC7Ca864F"
-      abi: OptionToken
-      startBlock: 27005944
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - ActivePosition
-        - Approval
-        - ApprovalForAll
-        - ClosePosition
-        - ForceClosePosition
-        - Initialize
-        - OpenPosition
-        - Transfer
-        - UpdateBaseURI
-      abis:
-        - name: OptionToken
-          file: ./abis/OptionToken.json
-      eventHandlers:
-        - event: ActivePosition(indexed uint256,uint256)
-          handler: handleActivePosition
-        - event: Approval(indexed address,indexed address,indexed uint256)
-          handler: handleApproval
-        - event: ApprovalForAll(indexed address,indexed address,bool)
-          handler: handleApprovalForAll
-        - event: ClosePosition(indexed uint256)
-          handler: handleClosePosition
-        - event: ForceClosePosition(indexed uint256)
-          handler: handleForceClosePosition
-        - event: Initialize(indexed address)
-          handler: handleInitialize
-        - event: OpenPosition(address,indexed address,indexed uint256,uint8,uint256,uint256,uint256)
-          handler: handleOpenPosition
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
-        - event: UpdateBaseURI(string)
-          handler: handleUpdateBaseURI
-      file: ./src/option-token.ts
-  - kind: ethereum
-    name: OptionToken-MAYC
-    network: arbitrum-goerli
-    source:
-      address: "0xf9dFD346Ef9991A9f223610903777C3e049d45ae"
-      abi: OptionToken
-      startBlock: 27005944
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - ActivePosition
-        - Approval
-        - ApprovalForAll
-        - ClosePosition
-        - ForceClosePosition
-        - Initialize
-        - OpenPosition
-        - Transfer
-        - UpdateBaseURI
-      abis:
-        - name: OptionToken
-          file: ./abis/OptionToken.json
-      eventHandlers:
-        - event: ActivePosition(indexed uint256,uint256)
-          handler: handleActivePosition
-        - event: Approval(indexed address,indexed address,indexed uint256)
-          handler: handleApproval
-        - event: ApprovalForAll(indexed address,indexed address,bool)
-          handler: handleApprovalForAll
-        - event: ClosePosition(indexed uint256)
-          handler: handleClosePosition
-        - event: ForceClosePosition(indexed uint256)
-          handler: handleForceClosePosition
-        - event: Initialize(indexed address)
-          handler: handleInitialize
-        - event: OpenPosition(address,indexed address,indexed uint256,uint8,uint256,uint256,uint256)
-          handler: handleOpenPosition
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
-        - event: UpdateBaseURI(string)
-          handler: handleUpdateBaseURI
-      file: ./src/option-token.ts
