@@ -1,0 +1,104 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Vault
+    network: arbitrum-goerli
+    source:
+      address: "0xefb7643ea6e973179ea848a33012e49eedfcff7c"
+      abi: Vault
+      startBlock: 31477416
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ActivateMarket
+        - ActivatePosition
+        - CancelPosition
+        - CreateMarket
+        - CreateStrike
+        - DeactivateMarket
+        - DefreezeMarket
+        - DestoryStrike
+        - ExercisePosition
+        - ExpirePosition
+        - FailPosition
+        - FreezeMarket
+        - KeeperAddressUpdated
+        - OpenPosition
+        - OwnershipTransferred
+        - PauseVault
+        - Paused
+        - UnpauseVault
+        - Unpaused
+        - UpdateLPTokenPrice
+      abis:
+        - name: Vault
+          file: ./abis/Vault.json
+      eventHandlers:
+        - event: ActivateMarket(indexed address,indexed address)
+          handler: handleActivateMarket
+        - event: ActivatePosition(indexed address,indexed address,indexed uint256,uint256,uint256,int256)
+          handler: handleActivatePosition
+        - event: CancelPosition(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleCancelPosition
+        - event: CreateMarket(indexed address,uint32,address)
+          handler: handleCreateMarket
+        - event: CreateStrike(indexed uint256,uint256,uint256,uint256,uint256)
+          handler: handleCreateStrike
+        - event: DeactivateMarket(indexed address,indexed address)
+          handler: handleDeactivateMarket
+        - event: DefreezeMarket(indexed address,indexed address)
+          handler: handleDefreezeMarket
+        - event: DestoryStrike(indexed uint256)
+          handler: handleDestoryStrike
+        - event: ExercisePosition(indexed address,indexed address,indexed uint256,uint256,uint256,uint256)
+          handler: handleExercisePosition
+        - event: ExpirePosition(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleExpirePosition
+        - event: FailPosition(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleFailPosition
+        - event: FreezeMarket(indexed address,indexed address)
+          handler: handleFreezeMarket
+        - event: KeeperAddressUpdated(indexed address)
+          handler: handleKeeperAddressUpdated
+        - event: OpenPosition(address,indexed address,indexed address,indexed uint256,(uint8,uint256,uint256,uint256,uint256,uint256,uint256))
+          handler: handleOpenPosition
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: PauseVault(indexed address)
+          handler: handlePauseVault
+        - event: Paused(address)
+          handler: handlePaused
+        - event: UnpauseVault(indexed address)
+          handler: handleUnpauseVault
+        - event: Unpaused(address)
+          handler: handleUnpaused
+        - event: UpdateLPTokenPrice(indexed address,uint256)
+          handler: handleUpdateLPTokenPrice
+      file: ./src/vault.ts
+  - kind: ethereum
+    name: LPToken
+    network: arbitrum-goerli
+    source:
+      address: "0x942c9eab70bcd3ebeb11fa47055dd6a0a0241308"
+      abi: LPToken
+      startBlock: 31477416
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Deposit
+        - Withdraw
+      abis:
+        - name: LPToken
+          file: ./abis/LPToken.json
+      eventHandlers:
+        - event: Deposit(indexed address,indexed address,uint256,uint256)
+          handler: handleDeposit
+        - event: Withdraw(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleWithdraw
+      file: ./src/lp-token.ts
