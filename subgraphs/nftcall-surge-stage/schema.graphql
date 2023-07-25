@@ -231,3 +231,24 @@ type OptionPosition @entity {
   updateTimestamp: Int!
   createTimestamp: Int!
 }
+
+type Vault @entity {
+  id: ID!
+  totalTradingVolume: BigInt!
+  totalPremiumCollected: BigInt!
+  totalTrades: Int!
+  updateTimestamp: Int!
+  createTimestamp: Int!
+}
+
+type Trader @entity {
+  id: ID!
+  totalTrades: Int!
+  totalExercisedOptionPosition: Int!
+  depositAmount: BigInt!
+  totalRevenue: BigInt!
+  totalVolume: BigInt!
+  totalPremium: BigInt!
+  updateTimestamp: Int!
+  createTimestamp: Int!
+}

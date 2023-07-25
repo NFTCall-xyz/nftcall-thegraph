@@ -43,8 +43,11 @@ import {
   UnpauseVault,
   Unpaused,
   UpdateLPTokenPrice,
+  Vault,
+  Trader,
 } from "../generated/schema";
 import { getOptionPositionId } from "./adapter/option-position";
+import { getTraderEntity } from "./adapter/trader";
 
 export function handleActivateMarket(event: ActivateMarketEvent): void {
   let entity = new ActivateMarket(
@@ -288,7 +291,6 @@ export function handleOpenPosition(event: OpenPositionEvent): void {
   positionEntity.returnedPremium = BigInt.fromI32(0);
   positionEntity.revenue = BigInt.fromI32(0);
   positionEntity.exerciseFee = BigInt.fromI32(0);
-  positionEntity.entryPrice = BigInt.fromI32(0);
   positionEntity.delta = BigInt.fromI32(0);
   positionEntity.settlementPrice = BigInt.fromI32(0);
 
@@ -315,9 +317,10 @@ export function handleActivatePosition(event: ActivatePositionEvent): void {
 
   entity.save();
 
-  let positionEntity = new OptionPosition(
+  let positionEntity = OptionPosition.load(
     getOptionPositionId(event.params.collection, event.params.positionId)
   );
+  if (!positionEntity) return;
 
   positionEntity.status = "Active";
   positionEntity.premium = event.params.premium;
@@ -326,6 +329,39 @@ export function handleActivatePosition(event: ActivatePositionEvent): void {
 
   positionEntity.updateTimestamp = event.block.timestamp.toI32();
   positionEntity.save();
+
+  let vaultEntity = Vault.load("1");
+  if (vaultEntity == null) {
+    vaultEntity = new Vault("1");
+    vaultEntity.totalTradingVolume = BigInt.fromI32(0);
+    vaultEntity.totalPremiumCollected = BigInt.fromI32(0);
+    vaultEntity.totalTrades = 0;
+    vaultEntity.createTimestamp = event.block.timestamp.toI32();
+  }
+
+  const tradingVolume = positionEntity.entryPrice.times(positionEntity.amount);
+  vaultEntity.totalTradingVolume = vaultEntity.totalTradingVolume.plus(
+    tradingVolume
+  );
+  vaultEntity.totalPremiumCollected = vaultEntity.totalPremiumCollected.plus(
+    event.params.premium
+  );
+  vaultEntity.totalTrades = vaultEntity.totalTrades + 1;
+  vaultEntity.updateTimestamp = event.block.timestamp.toI32();
+  vaultEntity.save();
+
+  const traderEntity = getTraderEntity(
+    positionEntity.receiverAddress,
+    event.block.timestamp.toI32()
+  );
+
+  traderEntity.totalVolume = traderEntity.totalVolume.plus(tradingVolume);
+  traderEntity.totalPremium = traderEntity.totalPremium.plus(
+    event.params.premium
+  );
+  traderEntity.totalTrades = traderEntity.totalTrades + 1;
+  traderEntity.updateTimestamp = event.block.timestamp.toI32();
+  traderEntity.save();
 }
 
 export function handleCancelPosition(event: CancelPositionEvent): void {
@@ -343,9 +379,10 @@ export function handleCancelPosition(event: CancelPositionEvent): void {
 
   entity.save();
 
-  let positionEntity = new OptionPosition(
+  let positionEntity = OptionPosition.load(
     getOptionPositionId(event.params.collection, event.params.positionId)
   );
+  if (!positionEntity) return;
 
   positionEntity.status = "Cancelled";
   positionEntity.returnedPremium = event.params.returnedPremium;
@@ -371,9 +408,10 @@ export function handleExercisePosition(event: ExercisePositionEvent): void {
 
   entity.save();
 
-  let positionEntity = new OptionPosition(
+  let positionEntity = OptionPosition.load(
     getOptionPositionId(event.params.collection, event.params.positionId)
   );
+  if (!positionEntity) return;
 
   positionEntity.status = "Exercised";
   positionEntity.revenue = event.params.revenue;
@@ -382,6 +420,17 @@ export function handleExercisePosition(event: ExercisePositionEvent): void {
 
   positionEntity.updateTimestamp = event.block.timestamp.toI32();
   positionEntity.save();
+
+  let traderEntity = Trader.load(positionEntity.receiverAddress.toHexString());
+  if (traderEntity) {
+    traderEntity.totalRevenue = traderEntity.totalRevenue.plus(
+      event.params.revenue
+    );
+    traderEntity.totalExercisedOptionPosition =
+      traderEntity.totalExercisedOptionPosition + 1;
+    traderEntity.updateTimestamp = event.block.timestamp.toI32();
+    traderEntity.save();
+  }
 }
 
 export function handleExpirePosition(event: ExpirePositionEvent): void {
@@ -399,9 +448,10 @@ export function handleExpirePosition(event: ExpirePositionEvent): void {
 
   entity.save();
 
-  let positionEntity = new OptionPosition(
+  let positionEntity = OptionPosition.load(
     getOptionPositionId(event.params.collection, event.params.positionId)
   );
+  if (!positionEntity) return;
 
   positionEntity.status = "Expired";
   positionEntity.settlementPrice = event.params.settlementPrice;
@@ -425,9 +475,10 @@ export function handleFailPosition(event: FailPositionEvent): void {
 
   entity.save();
 
-  let positionEntity = new OptionPosition(
+  let positionEntity = OptionPosition.load(
     getOptionPositionId(event.params.collection, event.params.positionId)
   );
+  if (!positionEntity) return;
 
   positionEntity.status = "Failed";
   positionEntity.returnedPremium = event.params.returnedPremium;

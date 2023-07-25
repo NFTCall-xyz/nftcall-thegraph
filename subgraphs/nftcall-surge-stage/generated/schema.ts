@@ -1987,3 +1987,184 @@ export class OptionPosition extends Entity {
     this.set("createTimestamp", Value.fromI32(value));
   }
 }
+
+export class Vault extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Vault entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Vault must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Vault", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Vault | null {
+    return changetype<Vault | null>(store.get("Vault", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get totalTradingVolume(): BigInt {
+    let value = this.get("totalTradingVolume");
+    return value!.toBigInt();
+  }
+
+  set totalTradingVolume(value: BigInt) {
+    this.set("totalTradingVolume", Value.fromBigInt(value));
+  }
+
+  get totalPremiumCollected(): BigInt {
+    let value = this.get("totalPremiumCollected");
+    return value!.toBigInt();
+  }
+
+  set totalPremiumCollected(value: BigInt) {
+    this.set("totalPremiumCollected", Value.fromBigInt(value));
+  }
+
+  get totalTrades(): i32 {
+    let value = this.get("totalTrades");
+    return value!.toI32();
+  }
+
+  set totalTrades(value: i32) {
+    this.set("totalTrades", Value.fromI32(value));
+  }
+
+  get updateTimestamp(): i32 {
+    let value = this.get("updateTimestamp");
+    return value!.toI32();
+  }
+
+  set updateTimestamp(value: i32) {
+    this.set("updateTimestamp", Value.fromI32(value));
+  }
+
+  get createTimestamp(): i32 {
+    let value = this.get("createTimestamp");
+    return value!.toI32();
+  }
+
+  set createTimestamp(value: i32) {
+    this.set("createTimestamp", Value.fromI32(value));
+  }
+}
+
+export class Trader extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Trader entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Trader must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Trader", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Trader | null {
+    return changetype<Trader | null>(store.get("Trader", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get totalTrades(): i32 {
+    let value = this.get("totalTrades");
+    return value!.toI32();
+  }
+
+  set totalTrades(value: i32) {
+    this.set("totalTrades", Value.fromI32(value));
+  }
+
+  get totalExercisedOptionPosition(): i32 {
+    let value = this.get("totalExercisedOptionPosition");
+    return value!.toI32();
+  }
+
+  set totalExercisedOptionPosition(value: i32) {
+    this.set("totalExercisedOptionPosition", Value.fromI32(value));
+  }
+
+  get depositAmount(): BigInt {
+    let value = this.get("depositAmount");
+    return value!.toBigInt();
+  }
+
+  set depositAmount(value: BigInt) {
+    this.set("depositAmount", Value.fromBigInt(value));
+  }
+
+  get totalRevenue(): BigInt {
+    let value = this.get("totalRevenue");
+    return value!.toBigInt();
+  }
+
+  set totalRevenue(value: BigInt) {
+    this.set("totalRevenue", Value.fromBigInt(value));
+  }
+
+  get totalVolume(): BigInt {
+    let value = this.get("totalVolume");
+    return value!.toBigInt();
+  }
+
+  set totalVolume(value: BigInt) {
+    this.set("totalVolume", Value.fromBigInt(value));
+  }
+
+  get totalPremium(): BigInt {
+    let value = this.get("totalPremium");
+    return value!.toBigInt();
+  }
+
+  set totalPremium(value: BigInt) {
+    this.set("totalPremium", Value.fromBigInt(value));
+  }
+
+  get updateTimestamp(): i32 {
+    let value = this.get("updateTimestamp");
+    return value!.toI32();
+  }
+
+  set updateTimestamp(value: i32) {
+    this.set("updateTimestamp", Value.fromI32(value));
+  }
+
+  get createTimestamp(): i32 {
+    let value = this.get("createTimestamp");
+    return value!.toI32();
+  }
+
+  set createTimestamp(value: i32) {
+    this.set("createTimestamp", Value.fromI32(value));
+  }
+}
