@@ -237,6 +237,7 @@ type Vault @entity {
   totalTradingVolume: BigInt!
   totalPremiumCollected: BigInt!
   totalTrades: Int!
+  totalTraders: Int!
   updateTimestamp: Int!
   createTimestamp: Int!
 }
@@ -247,6 +248,7 @@ type Trader @entity {
   totalExercisedOptionPosition: Int!
   depositAmount: BigInt!
   totalRevenue: BigInt!
+  PNL: BigInt!
   totalVolume: BigInt!
   totalPremium: BigInt!
   updateTimestamp: Int!

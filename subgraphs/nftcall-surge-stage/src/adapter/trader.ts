@@ -8,6 +8,7 @@ export function getTraderEntity(
   let traderEntity = Trader.load(traderAddress.toHexString());
   if (traderEntity == null) {
     traderEntity = new Trader(traderAddress.toHexString());
+    traderEntity.PNL = BigInt.fromI32(0);
     traderEntity.totalRevenue = BigInt.fromI32(0);
     traderEntity.depositAmount = BigInt.fromI32(0);
     traderEntity.totalVolume = BigInt.fromI32(0);

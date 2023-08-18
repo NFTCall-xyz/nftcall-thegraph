@@ -2046,6 +2046,15 @@ export class Vault extends Entity {
     this.set("totalTrades", Value.fromI32(value));
   }
 
+  get totalTraders(): i32 {
+    let value = this.get("totalTraders");
+    return value!.toI32();
+  }
+
+  set totalTraders(value: i32) {
+    this.set("totalTraders", Value.fromI32(value));
+  }
+
   get updateTimestamp(): i32 {
     let value = this.get("updateTimestamp");
     return value!.toI32();
@@ -2130,6 +2139,15 @@ export class Trader extends Entity {
 
   set totalRevenue(value: BigInt) {
     this.set("totalRevenue", Value.fromBigInt(value));
+  }
+
+  get PNL(): BigInt {
+    let value = this.get("PNL");
+    return value!.toBigInt();
+  }
+
+  set PNL(value: BigInt) {
+    this.set("PNL", Value.fromBigInt(value));
   }
 
   get totalVolume(): BigInt {

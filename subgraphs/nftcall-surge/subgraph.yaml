@@ -6,9 +6,9 @@ dataSources:
     name: Vault
     network: arbitrum-goerli
     source:
-      address: "0xefb7643ea6e973179ea848a33012e49eedfcff7c"
+      address: "0xacaaad3aa96afecd2ec40afac6441a5719eecc11"
       abi: Vault
-      startBlock: 31477416
+      startBlock: 34957936
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -83,9 +83,9 @@ dataSources:
     name: LPToken
     network: arbitrum-goerli
     source:
-      address: "0x942c9eab70bcd3ebeb11fa47055dd6a0a0241308"
+      address: "0x89de5d43c66b6f26ce9418cbdfa8352511f20fb7"
       abi: LPToken
-      startBlock: 31477416
+      startBlock: 34957936
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

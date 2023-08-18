@@ -336,6 +336,7 @@ export function handleActivatePosition(event: ActivatePositionEvent): void {
     vaultEntity.totalTradingVolume = BigInt.fromI32(0);
     vaultEntity.totalPremiumCollected = BigInt.fromI32(0);
     vaultEntity.totalTrades = 0;
+    vaultEntity.totalTraders = 0;
     vaultEntity.createTimestamp = event.block.timestamp.toI32();
   }
 
@@ -348,17 +349,22 @@ export function handleActivatePosition(event: ActivatePositionEvent): void {
   );
   vaultEntity.totalTrades = vaultEntity.totalTrades + 1;
   vaultEntity.updateTimestamp = event.block.timestamp.toI32();
+
+  const traderAddress = positionEntity.receiverAddress;
+  const noTrader = Trader.load(traderAddress.toHexString()) == null;
+  if (noTrader) vaultEntity.totalTraders = vaultEntity.totalTraders + 1;
+
   vaultEntity.save();
 
   const traderEntity = getTraderEntity(
-    positionEntity.receiverAddress,
+    traderAddress,
     event.block.timestamp.toI32()
   );
 
   traderEntity.totalVolume = traderEntity.totalVolume.plus(tradingVolume);
-  traderEntity.totalPremium = traderEntity.totalPremium.plus(
-    event.params.premium
-  );
+  const totalPremium = traderEntity.totalPremium.plus(event.params.premium);
+  traderEntity.totalPremium = totalPremium;
+  traderEntity.PNL = traderEntity.totalRevenue.minus(totalPremium);
   traderEntity.totalTrades = traderEntity.totalTrades + 1;
   traderEntity.updateTimestamp = event.block.timestamp.toI32();
   traderEntity.save();
@@ -423,9 +429,9 @@ export function handleExercisePosition(event: ExercisePositionEvent): void {
 
   let traderEntity = Trader.load(positionEntity.receiverAddress.toHexString());
   if (traderEntity) {
-    traderEntity.totalRevenue = traderEntity.totalRevenue.plus(
-      event.params.revenue
-    );
+    const totalRevenue = traderEntity.totalRevenue.plus(event.params.revenue);
+    traderEntity.totalRevenue = totalRevenue;
+    traderEntity.PNL = totalRevenue.minus(traderEntity.totalPremium);
     traderEntity.totalExercisedOptionPosition =
       traderEntity.totalExercisedOptionPosition + 1;
     traderEntity.updateTimestamp = event.block.timestamp.toI32();
