@@ -6,14 +6,14 @@
     "codegen": "graph codegen",
     "build": "graph build",
     "deploy": "graph deploy --node https://api.thegraph.com/deploy/ nftcall-xyz/nftcall-surge",
-    "deploy:studio": "graph deploy --studio nftcall-goerli",
+    "deploy:studio": "graph deploy --studio nftcall-surge-blast-testnet",
     "create-local": "graph create --node http://localhost:8020/ nftcall-xyz/nftcall-surge",
     "remove-local": "graph remove --node http://localhost:8020/ nftcall-xyz/nftcall-surge",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 nftcall-xyz/nftcall-surge",
     "test": "graph test"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "0.37.1",
+    "@graphprotocol/graph-cli": "0.68.0",
     "@graphprotocol/graph-ts": "0.28.1"
   },
   "devDependencies": {
