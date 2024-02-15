@@ -6,7 +6,7 @@ dataSources:
     name: Vault
     network: blast-testnet
     source:
-      address: "0xd667b17296a5b223b3729f0edeede336bd08c72f"
+      address: "0x420f8e5c1943c97ed51137d71973a6175e426df8"
       abi: Vault
       startBlock: 1580261
     mapping:
