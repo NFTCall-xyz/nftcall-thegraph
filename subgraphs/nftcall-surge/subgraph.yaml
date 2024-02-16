@@ -6,9 +6,9 @@ dataSources:
     name: Vault
     network: blast-testnet
     source:
-      address: "0x420f8e5c1943c97ed51137d71973a6175e426df8"
+      address: "0x83819f24c84e0ef35cf6040e271004a8437071cb"
       abi: Vault
-      startBlock: 1580261
+      startBlock: 1680850
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -83,9 +83,9 @@ dataSources:
     name: LPToken
     network: blast-testnet
     source:
-      address: "0x2637c8e5934c2464d24640aee5754cf2897c7702"
+      address: "0xe7ce3c5dad7aeb5bd3182346f5c96b81c00d0cb9"
       abi: LPToken
-      startBlock: 1580261
+      startBlock: 1680850
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
